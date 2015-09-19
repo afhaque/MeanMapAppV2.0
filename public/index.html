@@ -55,14 +55,15 @@
                             <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username">
                         </div>
                         <div class="form-group">
-                            <label for="location">Location</label>
-                            <input type="text" class="form-control" id="location" placeholder="Houston, Texas" ng-model="formData.location">
+                            <label for="location">Location (Lat, Long)</label>
+                            <input type="text" class="form-control" id="location" placeholder="29.74,-95.55" ng-model="formData.location">
+                            <button type="submit" class="btn btn-info btn-xs pull-right " onclick="getLocation()">Get Coordinates</button>
                         </div>
 
                         <label class="radio control-label">Gender</label>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="optionsRadios" id="radiomale" value="Male" checked ng-model="formData.gender">
+                                <input type="radio" name="optionsRadios" id="radiomale" value="Male" ng-model="formData.gender">
                                 Male
                             </label>
                         </div>
@@ -92,7 +93,9 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="row marketing">
         <!-- Filter Form -->
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -109,11 +112,12 @@
                             <label for="exampleInputEmail1">Distance Away (Miles)</label>
                             <input type="email" class="form-control" id="exampleInputEmail1" placeholder="5">
                         </div>
-                        <button type="submit" class="btn btn-info btn-block">Filter Results</button>
+                        <button type="submit" class="btn btn-primary btn-block">Filter Results</button>
                     </form>
                 </div>
             </div>
             <hr/>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -124,6 +128,23 @@
 
 <!-- Other Scripts -->
 <script src="../bower_components/holderjs/holder.js"></script>
+
+<!-- Geolocation -->
+<script>
+    var x = document.getElementById("location");
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.value = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function showPosition(position) {
+        x.value = position.coords.latitude.toFixed(2) + ',' + position.coords.longitude.toFixed(2);
+    }
+</script>
 
 <!-- Google Maps -->
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1nRqQ4CO_Bi8opqLGzuiCvJ6vk4_K91Y&sensor=false"></script>
