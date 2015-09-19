@@ -84,4 +84,10 @@ body {
     .jumbotron {
         border-bottom: 0;
     }
+
+    /* Google Map! */
+    #map {
+        height: 500px;
+        width: 500px;
+    }
 }
