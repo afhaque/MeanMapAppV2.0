@@ -6,12 +6,14 @@ var Schema      = mongoose.Schema;
 
 var UserSchema = new Schema({
     username: String,
-    location: String,
-    lat: Number,
-    lng: Number,
     gender: String,
     age: Number,
     favlang: String,
+    type: {type: String, default: "Feature"},
+    geometry: {
+        type: {type: String, default: "Point"},
+        coordinates: [Number]
+    },
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}
 });

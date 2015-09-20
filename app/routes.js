@@ -10,7 +10,7 @@ module.exports = function(app) {
     // ===============================================
 
     // Retrieve JSON records for all users in the database
-    app.get('/api/users', function(req, res){
+    app.get('/users', function(req, res){
         var query = User.find({});
         query.exec(function(err, users){
             if(err)
@@ -21,7 +21,7 @@ module.exports = function(app) {
 
 
     // Retrieve JSON records for all users a certain distance away from a given address
-    app.get('/api/filteredusers/:address/:distance', function(req, res){
+    app.get('/filteredusers/:address/:distance', function(req, res){
 /*        var address     = req.params.address;
         var distance    = req.params.distance;
 
@@ -41,7 +41,7 @@ module.exports = function(app) {
     // ===============================================
 
     // Create a New User on the Map
-    app.post('/api/users', function(req, res){
+    app.post('/users', function(req, res){
         var newuser = new User(req.body);
         newuser.save(function(err){
             if(err)
@@ -53,7 +53,7 @@ module.exports = function(app) {
     // DELETE Routes (Dev Only)
     // ===============================================
     // Delete a User off the Map
-    app.delete('/api/users/:objID', function(req, res){
+    app.delete('/users/:objID', function(req, res){
         var objID = req.params.objID;
         var update = req.body;
 

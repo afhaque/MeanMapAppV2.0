@@ -39,13 +39,11 @@
 
     <!-- Map and Post Form -->
     <div class="row marketing">
+        <!-- Map -->
         <div class="col-md-7">
-<!--
-            <div id ="mapid-af87fea7-9e57-492b-bfbe-c17e6aba01bb"></div>
--->
             <div id="map"></div>
-
         </div>
+        <!-- Post Form -->
         <div class="col-md-5">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -98,8 +96,8 @@
         </div>
     </div>
 
+    <!-- Filter Form -->
     <div class="row marketing">
-        <!-- Filter Form -->
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -108,23 +106,18 @@
                 <div class="panel-body">
                     <form>
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Your Location</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="3030 Elmside Dr. Houston, TX">
+                            <label for="yourlocation">Your Location</label>
+                            <input type="text" class="form-control" id="yourlocation" placeholder="3030 Elmside Dr. Houston, TX">
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Distance Away (Miles)</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="5">
+                            <label for="distanceaway">Distance Away (Miles)</label>
+                            <input type="number" class="form-control" id="distanceaway" placeholder="5">
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Filter Results</button>
                     </form>
                 </div>
             </div>
             <hr/>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <p>blah</p>
         </div>
     </div>
 
@@ -137,47 +130,9 @@
 <!-- Other Scripts -->
 <script src="../bower_components/holderjs/holder.js"></script>
 
-<!-- Geolocation -->
-<script>
-    var x = document.getElementById("location");
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            x.value = "Geolocation is not supported by this browser.";
-        }
-    }
-
-    function showPosition(position) {
-        x.value = position.coords.latitude.toFixed(2) + ',' + position.coords.longitude.toFixed(2);
-    }
-</script>
-
-<!-- Google Maps -->
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1nRqQ4CO_Bi8opqLGzuiCvJ6vk4_K91Y&sensor=false"></script>
-<script type="text/javascript" src="http://www.map-generator.org/map/iframejs/af87fea7-9e57-492b-bfbe-c17e6aba01bb?key=AIzaSyA1nRqQ4CO_Bi8opqLGzuiCvJ6vk4_K91Y&width=500px&height=500px"></script>
-
 <!-- Google Maps Real -->
-<script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s&callback=initMap"></script>
+<script src="js/googlemap.js"></script>
 
-    function initMap() {
-        var myLatLng = {lat: 29.737, lng: -95.546};
-
-        var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 5,
-            center: myLatLng
-        });
-
-        var marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-            title: 'Hello World!'
-        });
-    }
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s&callback=initMap"
-        async defer></script>
 </body>
-
 </html>
