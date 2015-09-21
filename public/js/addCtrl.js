@@ -1,8 +1,9 @@
 var addCtrl = angular.module('addCtrl', ['geolocation', 'gservice']);
-addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
+addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, gservice){
 
     // Initialize Variables
     $scope.formData = {};
+    $scope.blah = "";
     var coords = {};
     var lat = 0;
     var long = 0;
@@ -14,6 +15,15 @@ addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
         // Display coordinates in location textbox rounded to three decimal points
         $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
         $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
+
+    });
+
+    $scope.$on("clicked", function(){
+        alert("clicked");
+        alert(gservice.clickLat);
+        $scope.blah = gservice.clickLat;
+        $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
+        $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
     });
 
     // Creates a new user using all of the form fields
@@ -37,11 +47,12 @@ addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
                 $scope.formData.age = "";
                 $scope.formData.favlang = "";
 
-                // Launch GoogleMapService
-                gservice.refresh();
             })
             .error(function(data){
                 console.log('Error: ' + data);
             });
+
+        // Launch GoogleMapService
+        gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
     };
 });

@@ -1,14 +1,22 @@
 angular.module('gservice', [])
-    .factory('gservice', function($http, $timeout){
+    .factory('gservice', function($rootScope, $http, $timeout){
 
         // Service our Factory Will Return
         var googleMapService = {};
+        googleMapService.clickLat  = 0;
+        googleMapService.clickLong = 0;
 
         // Array of locations obtained from API call
         var locations = [];
 
+        var lastMarker;
+
+        // Starting Location (Htown Vicious)
+        var startLat = 39.737;
+        var startLng = -95.546;
+
         // Refresh function
-        googleMapService.refresh = function(){
+        googleMapService.refresh = function(latitude, longitude){
 
             // Clears the holding array of locations
             locations = [];
@@ -21,7 +29,7 @@ angular.module('gservice', [])
                 locations = responseToLocations(response);
 
                 // Initializes the Map
-                initialize();
+                initialize(latitude, longitude);
             }).error(function(){});
         };
 
@@ -73,19 +81,8 @@ angular.module('gservice', [])
             this.favlang = favlang
         }
 
-        function setMarker(position, map){
-            var marker = new google.maps.Marker({
-                position: position,
-                animation: google.maps.Animation.BOUNCE,
-                map: map
-            });
-            map.panTo(position);
-        }
-
-        function initialize() {
-
-            var myLatLng = {lat: 29.737, lng: -95.546};
-
+        function initialize(latitude, longitude) {
+            var myLatLng = {lat: startLat, lng: startLng};
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 5,
                 center: myLatLng
@@ -100,19 +97,33 @@ angular.module('gservice', [])
                });
             });
 
-/*            locations.forEach(function(n, i){
-                //We create a marker
+            // Move to the submitted location
+            map.panTo(new google.maps.LatLng(latitude, longitude));
+
+            google.maps.event.addListener(map, 'click', function(e){
                 var marker = new google.maps.Marker({
-                    position: n.latlon,
+                    position: e.latLng,
+                    animation: google.maps.Animation.BOUNCE,
                     map: map,
-                    title: "Hello world",
-                    icon: icon
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
                 });
-            });*/
+
+                if(lastMarker){
+                    lastMarker.setMap(null);
+                }
+                lastMarker = marker;
+                map.panTo(marker.position);
+
+
+                // Update Broadcasted Variable
+                googleMapService.clickLat = marker.getPosition().lat();
+                googleMapService.clickLong = marker.getPosition().lng();
+                $rootScope.$broadcast("clicked");
+            });
         }
 
         google.maps.event.addDomListener(window, 'load',
-            googleMapService.refresh);
+            googleMapService.refresh(startLat, startLng));
 
         return googleMapService;
     });
