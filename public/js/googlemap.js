@@ -2,10 +2,11 @@
  * Created by Ahmed on 9/19/2015.
  */
 function initMap() {
-    var myLatLng = {lat: 39.737, lng: -95.546};
+    var myLatLng = {lat: 29.736655799999994, lng: -95.54598890000001};
 
+    var minZoomLevel = 10;
     var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 5,
+        zoom: 6,
         center: myLatLng
     });
 
@@ -24,5 +25,10 @@ function initMap() {
 
     marker.addListener('click', function(){
         infowindow.open(map, marker);
+    });
+
+    // Limit the zoom level
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        if (map.getZoom() > minZoomLevel) map.setZoom(minZoomLevel);
     });
 }
