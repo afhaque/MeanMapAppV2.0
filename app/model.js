@@ -9,11 +9,8 @@ var UserSchema = new Schema({
     gender: String,
     age: Number,
     favlang: String,
-    type: {type: String, default: "Feature"},
-    geometry: {
-        type: {type: String, default: "Point"},
-        coordinates: [Number]
-    },
+    longitude: {type: Number, default: 65.901224},
+    latitude: {type: Number, default: -46.629026},
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}
 });

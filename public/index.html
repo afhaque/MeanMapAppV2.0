@@ -10,18 +10,23 @@
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="style.css"/>
 
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s"></script>
+
     <!-- Modernizr -->
     <script src="../bower_components/modernizr/bin/modernizr"></script>
 
     <!-- JS / Angular -->
     <script src="../bower_components/jquery/src/jquery.js"></script>
-    <script data-require="angular.js@1.2.0-rc2" src="http://code.angularjs.org/1.2.0-rc.2/angular.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
-    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/addCtrl.js"></script>
+    <script src="js/gservice.js"></script>
 
 </head>
 
-<body ng-controller="mainCtrl">
+<body ng-controller="addCtrl">
 <!--[if lt IE 10]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
@@ -57,10 +62,13 @@
                             <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username">
                         </div>
                         <div class="form-group">
-                            <label for="location">Location (Lat, Long)</label>
-                            <input type="text" class="form-control" id="location" ng-model="formData.location" readonly>
+                            <label for="latitude">Latitude</label>
+                            <input type="text" class="form-control" id="latitude" ng-model="formData.latitude">
                         </div>
-
+                        <div class="form-group">
+                            <label for="longitude">Longitude</label>
+                            <input type="text" class="form-control" id="longitude" ng-model="formData.longitude">
+                        </div>
                         <label class="radio control-label">Gender</label>
                         <div class="radio">
                             <label>
@@ -170,7 +178,6 @@
 <script src="../bower_components/holderjs/holder.js"></script>
 
 <!-- Google Maps Real -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s&callback=initMap"></script>
 <script src="js/googlemap.js"></script>
 
 </body>

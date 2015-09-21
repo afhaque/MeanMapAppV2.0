@@ -28,8 +28,8 @@ function initMap() {
         infowindow.open(map, marker);
     });
 
-    // Limit the zoom level
+/*    // Limit the zoom level
     google.maps.event.addListener(map, 'zoom_changed', function() {
         if (map.getZoom() > minZoomLevel) map.setZoom(minZoomLevel);
-    });
+    });*/
 }
