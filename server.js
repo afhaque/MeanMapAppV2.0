@@ -3,7 +3,7 @@
  */
 var express         = require('express');
 var mongoose        = require('mongoose');
-var port            = process.env.PORT || 8080;
+var port            = process.env.PORT || 3000;
 var database        = require('./app/config');
 var path            = require('path');
 var morgan          = require('morgan');
