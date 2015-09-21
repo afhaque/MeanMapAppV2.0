@@ -23,6 +23,7 @@ function initMap() {
         '<b>Gender</b>: Male<br><b>Favorite Language</b>: Fortran</p>'
     });
 
+    // Show popup window
     marker.addListener('click', function(){
         infowindow.open(map, marker);
     });
