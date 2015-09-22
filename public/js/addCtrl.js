@@ -16,14 +16,17 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
         $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
         $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
 
+        gservice.refresh(coords.lat, coords.long);
+
+
     });
 
-    $scope.$on("clicked", function(){
-        alert("clicked");
-        alert(gservice.clickLat);
-        $scope.blah = gservice.clickLat;
-        $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
-        $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
+    // Get Coordinates based on clicks
+    $rootScope.$on("clicked", function(){
+        $scope.$apply(function(){
+            $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
+            $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
+        });
     });
 
     // Creates a new user using all of the form fields

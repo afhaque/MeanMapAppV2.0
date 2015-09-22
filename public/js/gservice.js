@@ -12,11 +12,14 @@ angular.module('gservice', [])
         var lastMarker;
 
         // Starting Location (Htown Vicious)
-        var startLat = 39.737;
-        var startLng = -95.546;
+        var startLat = 39.50;
+        var startLng = -98.35;
 
         // Refresh function
         googleMapService.refresh = function(latitude, longitude){
+
+            startLat = latitude;
+            startLng = longitude;
 
             // Clears the holding array of locations
             locations = [];
@@ -84,7 +87,7 @@ angular.module('gservice', [])
         function initialize(latitude, longitude) {
             var myLatLng = {lat: startLat, lng: startLng};
             var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 5,
+                zoom: 3,
                 center: myLatLng
             });
 
@@ -97,15 +100,25 @@ angular.module('gservice', [])
                });
             });
 
+            var initialLocation = new google.maps.LatLng(latitude, longitude);
+            var marker = new google.maps.Marker({
+                position: initialLocation,
+                animation: google.maps.Animation.BOUNCE,
+                map: map,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+            });
+            lastMarker = marker;
+
             // Move to the submitted location
             map.panTo(new google.maps.LatLng(latitude, longitude));
+
 
             google.maps.event.addListener(map, 'click', function(e){
                 var marker = new google.maps.Marker({
                     position: e.latLng,
                     animation: google.maps.Animation.BOUNCE,
                     map: map,
-                    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
                 });
 
                 if(lastMarker){

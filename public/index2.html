@@ -34,8 +34,9 @@
     <!-- Header Menu  -->
     <div class="header">
         <ul class="nav nav-pills pull-right">
-            <li class="active"><a href="">Join the Team</a></li>
-            <li><a href="https://scotch.io/">Find Teammates</a></li>
+            <li class="active"><a href="">Demo</a></li>
+            <li><a href="https://scotch.io/">Tutorial</a></li>
+            <li><a href="https://github.com/afhaque/MeanMapApp">Code</a></li>
         </ul>
         <h3 class="text-muted">The Scotch MEAN MapApp</h3>
     </div>
@@ -57,7 +58,7 @@
                     <form>
                         <div class="form-group">
                             <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
+                            <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username">
                         </div>
                         <div class="form-group">
                             <label for="latitude">Latitude</label>
@@ -101,7 +102,70 @@
             </div>
         </div>
     </div>
-    <hr/>
+
+    <!-- Filter Form -->
+    <div class="row marketing">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title text-center">Find Other Scotchers!</h2>
+                </div>
+                <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="yourlocation">Your Location</label>
+                            <input type="text" class="form-control" id="yourlocation" placeholder="3030 Elmside Dr. Houston, TX">
+                        </div>
+                        <div class="form-group">
+                            <label for="distanceaway">Distance Away (Miles)</label>
+                            <input type="number" class="form-control" id="distanceaway" placeholder="5">
+                        </div>
+                        <button type="submit" class="btn btn-primary pull-left">Filter Results</button>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title text-center">Nearest Scotchers</h2>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <th class="tg-031e">Username</th>
+                            <th class="tg-031e">Distance (mi)</th>
+                            <th class="tg-031e">Favorite Language</th>
+                        </tr>
+                        <tr>
+                            <td class="tg-031e">afhaque</td>
+                            <td class="tg-031e">5 </td>
+                            <td class="tg-031e">Fortran</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-031e">stoppa</td>
+                            <td class="tg-031e">10</td>
+                            <td class="tg-031e">C++</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-031e">etrain</td>
+                            <td class="tg-031e">20</td>
+                            <td class="tg-031e">Java</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-031e">faavc</td>
+                            <td class="tg-031e">25</td>
+                            <td class="tg-031e">.NET</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-031e">Pear</td>
+                            <td class="tg-031e">33</td>
+                            <td class="tg-031e">Javascript</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <hr/>
+        </div>
+    </div>
 
     <!-- Footer -->
     <div class="footer">
