@@ -13,7 +13,8 @@ var UserSchema = new Schema({
     latitude: {type: Number, default: -46.629026},
     htmlverified: String,
     created_at: {type: Date, default: Date.now},
-    updated_at: {type: Date, default: Date.now}
+    updated_at: {type: Date, default: Date.now},
+    popup: String
 });
 
 UserSchema.pre('save', function(next){

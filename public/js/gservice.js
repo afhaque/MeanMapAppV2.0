@@ -10,6 +10,7 @@ angular.module('gservice', [])
         var locations = [];
 
         var lastMarker;
+        var currentSelectedMarker;
 
         // Starting Location (Somewhere in Kansas...)
         var startLat = 39.50;
@@ -95,9 +96,15 @@ angular.module('gservice', [])
                var marker = new google.maps.Marker({
                    position: n.latlon,
                    map: map,
-                   title: "Big Title",
+                   title: "Big Map",
                    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
                });
+
+                // Clicking on a Marker
+                google.maps.event.addListener(marker, 'click', function(e){
+                    currentSelectedMarker = n;
+                    n.message.open(map, marker);
+                });
             });
 
             var initialLocation = new google.maps.LatLng(latitude, longitude);
@@ -112,7 +119,7 @@ angular.module('gservice', [])
             // Move to the submitted location
             map.panTo(new google.maps.LatLng(latitude, longitude));
 
-
+            // Clicking on the Map
             google.maps.event.addListener(map, 'click', function(e){
                 var marker = new google.maps.Marker({
                     position: e.latLng,
@@ -126,7 +133,6 @@ angular.module('gservice', [])
                 }
                 lastMarker = marker;
                 map.panTo(marker.position);
-
 
                 // Update Broadcasted Variable
                 googleMapService.clickLat = marker.getPosition().lat();
