@@ -58,7 +58,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
             });
 
         // Launch GoogleMapService
-        gservice.refresh(39.50, -98.35);
+        gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
     };
 });
 
