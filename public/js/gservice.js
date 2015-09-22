@@ -11,7 +11,7 @@ angular.module('gservice', [])
 
         var lastMarker;
 
-        // Starting Location (Htown Vicious)
+        // Starting Location (Somewhere in Kansas...)
         var startLat = 39.50;
         var startLng = -98.35;
 

@@ -15,7 +15,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
         // Display coordinates in location textbox rounded to three decimal points
         $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
         $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
-
+        $scope.formData.htmlverified = "Yep (Thanks for giving us real data!)";
         gservice.refresh(coords.lat, coords.long);
 
 
@@ -26,6 +26,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
         $scope.$apply(function(){
             $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
             $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
+            $scope.formData.htmlverified = "Nope (Thanks for spamming my map...)";
         });
     });
 
@@ -38,7 +39,8 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
             age: $scope.formData.age,
             favlang: $scope.formData.favlang,
             latitude: $scope.formData.latitude,
-            longitude: $scope.formData.longitude
+            longitude: $scope.formData.longitude,
+            htmlverified: $scope.formData.htmlverified
         };
         // Saves the user data to the db
         $http.post('/users', userData)
@@ -56,6 +58,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
             });
 
         // Launch GoogleMapService
-        gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
+        gservice.refresh(39.50, -98.35);
     };
 });
+

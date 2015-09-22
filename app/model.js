@@ -11,6 +11,7 @@ var UserSchema = new Schema({
     favlang: String,
     longitude: {type: Number, default: 65.901224},
     latitude: {type: Number, default: -46.629026},
+    htmlverified: String,
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}
 });

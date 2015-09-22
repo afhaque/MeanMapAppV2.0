@@ -35,7 +35,7 @@
     <div class="header">
         <ul class="nav nav-pills pull-right">
             <li class="active"><a href="">Join the Team</a></li>
-            <li><a href="https://scotch.io/">Find Teammates</a></li>
+            <li class="disabled"><a href="">Find Teammates</a></li>
         </ul>
         <h3 class="text-muted">The Scotch MEAN MapApp</h3>
     </div>
@@ -59,14 +59,6 @@
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
                         </div>
-                        <div class="form-group">
-                            <label for="latitude">Latitude</label>
-                            <input type="text" class="form-control" id="latitude" ng-model="formData.latitude" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="longitude">Longitude</label>
-                            <input type="text" class="form-control" id="longitude" ng-model="formData.longitude" readonly>
-                        </div>
                         <label class="radio control-label">Gender</label>
                         <div class="radio">
                             <label>
@@ -86,7 +78,6 @@
                                 What's it to ya?
                             </label>
                         </div>
-
                         <div class="form-group">
                             <label for="age">Age</label>
                             <input type="number" class="form-control" id="age" placeholder="72" ng-model="formData.age">
@@ -94,6 +85,18 @@
                         <div class="form-group">
                             <label for="language">Favorite Language</label>
                             <input type="text" class="form-control" id="language" placeholder="Fortran" ng-model="formData.favlang">
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude">Latitude</label>
+                            <input type="text" class="form-control" id="latitude" placeholder="39.500" ng-model="formData.latitude" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude</label>
+                            <input type="text" class="form-control" id="longitude" placeholder="-98.350" ng-model="formData.longitude" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="verified">HTML5 Verified Location?</label>
+                            <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
                         </div>
                         <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()">Submit</button>
                     </form>
