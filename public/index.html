@@ -54,9 +54,9 @@
                 </div>
 
                 <div class="panel-body">
-                    <form>
+                    <form name ="addForm">
                         <div class="form-group">
-                            <label for="username">Username</label>
+                            <label for="username">Username <span class="badge">Required</span></label>
                             <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
                         </div>
                         <label class="radio control-label">Gender</label>
@@ -88,17 +88,17 @@
                         </div>
                         <div class="form-group">
                             <label for="latitude">Latitude</label>
-                            <input type="text" class="form-control" id="latitude" placeholder="39.500" ng-model="formData.latitude" readonly>
+                            <input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly>
                         </div>
                         <div class="form-group">
                             <label for="longitude">Longitude</label>
-                            <input type="text" class="form-control" id="longitude" placeholder="-98.350" ng-model="formData.longitude" readonly>
+                            <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
                         </div>
                         <div class="form-group">
                             <label for="verified">HTML5 Verified Location?</label>
                             <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
                         </div>
-                        <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()">Submit</button>
+                        <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>
                     </form>
                 </div>
             </div>
@@ -108,7 +108,8 @@
 
     <!-- Footer -->
     <div class="footer">
-        <p class="text-center"><span class="glyphicon glyphicon-check"></span> Created by Ahmed Haque for Scotch IO {{blah}}</p>
+        <p class="text-center"><span class="glyphicon glyphicon-check"></span> Created by Ahmed Haque for Scotch IO -
+            <a href="https://scotch.io/">App Tutorial</a> | <a href="https://github.com/afhaque/MeanMapAppV2.0">Github Repo</a></p>
     </div>
 </div>
 
