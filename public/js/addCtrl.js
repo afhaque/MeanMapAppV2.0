@@ -8,6 +8,8 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
     var lat = 0;
     var long = 0;
 
+    $scope.formData.longitude = -98.350;
+    $scope.formData.latitude = 39.500;
     // Get User's Location on Window Load (uses ngGeolocation)
     geolocation.getLocation().then(function(data){
         coords = {lat:data.coords.latitude, long:data.coords.longitude};
