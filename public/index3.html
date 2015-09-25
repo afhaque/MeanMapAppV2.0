@@ -34,8 +34,8 @@
     <!-- Header Menu  -->
     <div class="header">
         <ul class="nav nav-pills pull-right">
-            <li class="active"><a href="">Join the Team</a></li>
-            <li><a href="/index3.html">Find Teammates</a></li>
+            <li><a href="/">Join the Team</a></li>
+            <li class="active"><a href="">Find Teammates</a></li>
         </ul>
         <h3 class="text-muted">The Scotch MEAN MapApp</h3>
     </div>
@@ -50,56 +50,66 @@
         <div class="col-md-5">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title text-center">Join the Scotch Team!</h2>
+                    <h2 class="panel-title text-center">Find Teammates! (Map Query)</h2>
                 </div>
 
                 <div class="panel-body">
                     <form name ="addForm">
                         <div class="form-group">
-                            <label for="username">Username <span class="badge">Required</span></label>
-                            <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
+                            <label for="yourlocation">Your Location</span></label>
+                            <input type="text" class="form-control" id="yourlocation" placeholder="39.5, -98.35" readonly>
                         </div>
-                        <label class="radio control-label">Gender</label>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="radiomale" value="Male" ng-model="formData.gender">
+
+                        <div class="form-group">
+                            <label for="distanceaway">Max. Distance (mi)</span></label>
+                            <input type="text" class="form-control" id="distanceaway" placeholder="5">
+                        </div>
+
+                        <label>Gender</label>
+                        <div class="form-group">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="optionsRadios" id="radiomale" value="Male">
                                 Male
                             </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="radiofemale" value="Female" ng-model="formData.gender">
-                                Female
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="optionsRadios" id="radiomale" value="Female">
+                                Male
                             </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="radioother" value="What's it to ya?" ng-model="formData.gender">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="optionsRadios" id="radioother" value="What's it to ya?">
                                 What's it to ya?
                             </label>
                         </div>
+
                         <div class="form-group">
-                            <label for="age">Age</label>
-                            <input type="number" class="form-control" id="age" placeholder="72" ng-model="formData.age">
+                            <label for="age">Min. Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="5" ng-model="formData.age">
                         </div>
+
+                        <div class="form-group">
+                            <label for="age">Max Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="80" ng-model="formData.age">
+                        </div>
+
                         <div class="form-group">
                             <label for="language">Favorite Language</label>
                             <input type="text" class="form-control" id="language" placeholder="Fortran" ng-model="formData.favlang">
                         </div>
+
                         <div class="form-group">
-                            <label for="latitude">Latitude</label>
-                            <input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly>
+                            <label class="checkbox">Include Only HTML5 Verified Locations?</label>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="optionsRadios" id="radiomale" value="True"> True
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="longitude">Longitude</label>
-                            <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="verified">HTML5 Verified Location?</label>
-                            <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
-                        </div>
-                        <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>
+
+                        <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Search</button>
                     </form>
+                </div>
+                <div class="panel-footer">
+                    <p class="text-center">Hot Dang! We Found 45 Teammates.</p>
                 </div>
             </div>
         </div>
