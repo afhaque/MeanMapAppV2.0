@@ -61,6 +61,7 @@ angular.module('gservice', [])
         }
 
         function responseToLocations(response){
+
             var locations = [];
 
             // Loop through all of the locations

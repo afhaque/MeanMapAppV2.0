@@ -3,6 +3,7 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
 
     // Initialize Variables
     $scope.formData = {};
+    var queryBody = {};
     var queryResults = {};
 
     // Get User's Location on Window Load (uses ngGeolocation)
@@ -33,26 +34,38 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
 
     $scope.queryUsers = function(){
 
+        console.log("THIS IS A TEST for QueryBody");
+        console.log("lat: " + $scope.formData.latitude);
+        console.log("long: " + $scope.formData.longitude);
+        console.log("distance: " + $scope.formData.distance);
+        console.log("minAge: " + $scope.formData.minage);
+        console.log("maxAge: " + $scope.formData.maxage);
+        console.log("favLang: " + $scope.formData.favlang);
+        console.log("reqVerified: " + $scope.formData.verified);
+        console.log("END TEST;");
         // Assemble Query Body
-        var queryBody = {
-            lat: $scope.formData.latitude,
-            long:  $scope.formData.longitude,
+        queryBody = {
+            location: [$scope.formData.longitude, $scope.formData.latitude],
             distance: $scope.formData.distance,
             minAge: $scope.formData.minage,
             maxAge: $scope.formData.maxage,
             favlang: $scope.formData.favlang,
             reqVerified: $scope.formData.verified
         };
-        
+
+        console.log(queryBody);
+        console.log(queryBody.location[0]);
+
         // Do an HTTP call to get the filtered JSON
         $http.post('/query', queryBody)
-            .success(function(queryBody){
-
+            .success(function(queryResults){
+/*                console.log(queryBody.location[0]);
+                console.log(queryBody.location[1]);*/
                 // Pass the filtered results to the Google Map Service and refresh the map
-                gservice.refresh($scope.formData.latitude, $scope.formData.longitude, queryBody);
+                gservice.refresh(parseFloat(queryBody.location[1]), parseFloat(queryBody.location[0]), queryBody);
             })
-            .error(function(queryBody){
-                console.log('Error ' + queryBody);
+            .error(function(queryResults){
+                console.log('Error ' + queryResults);
             })
     };
 });

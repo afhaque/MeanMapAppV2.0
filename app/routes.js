@@ -47,8 +47,6 @@ module.exports = function(app) {
             query = query.where('location').near({ center: {type: 'Point', coordinates: [long, lat]},
                 maxDistance: distance * 1609.34,
                 spherical: true});
-
-            console.log("testlocation");
         }
 
         // ...include filter by Gender (all options)
