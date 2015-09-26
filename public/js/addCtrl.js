@@ -3,7 +3,6 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
 
     // Initialize Variables
     $scope.formData = {};
-    $scope.blah = "";
     var coords = {};
     var lat = 0;
     var long = 0;
@@ -33,7 +32,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
     });
 
     // Creates a new user using all of the form fields
-    $scope.createUser = function(){
+    $scope.createUser = function() {
         // Grabs all of the text box fields
         var userData = {
             username: $scope.formData.username,
@@ -45,7 +44,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
         };
         // Saves the user data to the db
         $http.post('/users', userData)
-            .success(function(data){
+            .success(function (data) {
 
                 // Clear the Form (except location)
                 $scope.formData.username = "";
@@ -54,7 +53,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
                 $scope.formData.favlang = "";
 
             })
-            .error(function(data){
+            .error(function (data) {
                 console.log('Error: ' + data);
             });
 

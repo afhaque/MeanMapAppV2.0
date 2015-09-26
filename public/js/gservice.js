@@ -17,7 +17,7 @@ angular.module('gservice', [])
         var startLng = -98.35;
 
         // Refresh function
-        googleMapService.refresh = function(latitude, longitude){
+        googleMapService.refresh = function(latitude, longitude, query){
 
             startLat = latitude;
             startLng = longitude;
@@ -25,16 +25,26 @@ angular.module('gservice', [])
             // Clears the holding array of locations
             locations = [];
 
-            // Ajax call
-            $http.get('/users').success(function(response){
-
+            if (query){
                 // Pulls the locations from the API and converts them into map coordinates
-
-                locations = responseToLocations(response);
+                locations = responseToLocations(query);
 
                 // Initializes the Map
                 initialize(latitude, longitude);
-            }).error(function(){});
+            }
+
+            else {
+                // Ajax call
+                $http.get('/users').success(function(response){
+
+                    // Pulls the locations from the API and converts them into map coordinates
+                    locations = responseToLocations(response);
+
+                    // Initializes the Map
+                    initialize(latitude, longitude);
+                }).error(function(){});
+            }
+
         };
 
 

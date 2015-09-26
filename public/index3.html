@@ -23,9 +23,10 @@
     <script src="js/app.js"></script>
     <script src="js/gservice.js"></script>
     <script src="js/addCtrl.js"></script>
+    <script src="js/queryCtrl.js"></script>
 </head>
 
-<body ng-controller="addCtrl">
+<body ng-controller="queryCtrl">
 <!--[if lt IE 10]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
@@ -56,56 +57,60 @@
                 <div class="panel-body">
                     <form name ="addForm">
                         <div class="form-group">
-                            <label for="yourlocation">Your Location</span></label>
-                            <input type="text" class="form-control" id="yourlocation" placeholder="39.5, -98.35" readonly>
+                            <label for="latitude">Your Location</span></label>
+                            <input type="text" class="form-control" id="latitude" placeholder="39.5" ng-model="formData.latitude" readonly>
                         </div>
 
                         <div class="form-group">
-                            <label for="distanceaway">Max. Distance (miles)</span></label>
-                            <input type="text" class="form-control" id="distanceaway" placeholder="5">
+                            <label for="longitude">Your Location</span></label>
+                            <input type="text" class="form-control" id="longitude" placeholder="-98.35" ng-model="formData.longitude" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="distance">Max. Distance (miles)</span></label>
+                            <input type="text" class="form-control" id="distance" placeholder="500" ng-model="formData.distance">
                         </div>
 
                         <label>Gender</label>
                         <div class="form-group">
                             <label class="checkbox-inline">
-                                <input type="checkbox" name="optionsRadios" id="radiomale" value="Male">
+                                <input type="checkbox" name="optionsRadios" id="checkmale" value="Male" ng-model="formData.male">
                                 Male
                             </label>
                             <label class="checkbox-inline">
-                                <input type="checkbox" name="optionsRadios" id="radiofemale" value="Female">
+                                <input type="checkbox" name="optionsRadios" id="checkfemale" value="Female" ng-model="formData.female">
                                 Female
                             </label>
                             <label class="checkbox-inline">
-                                <input type="checkbox" name="optionsRadios" id="radioother" value="What's it to ya?">
+                                <input type="checkbox" name="optionsRadios" id="checkother" value="What's it to ya?" ng-model="formData.other">
                                 What's it to ya?
                             </label>
                         </div>
 
                         <div class="form-group">
-                            <label for="age">Min. Age</label>
-                            <input type="number" class="form-control" id="age" placeholder="5" ng-model="formData.age">
+                            <label for="minage">Min. Age</label>
+                            <input type="number" class="form-control" id="minage" placeholder="5" ng-model="formData.minage">
                         </div>
 
                         <div class="form-group">
-                            <label for="age">Max Age</label>
-                            <input type="number" class="form-control" id="age" placeholder="80" ng-model="formData.age">
+                            <label for="maxage">Max Age</label>
+                            <input type="number" class="form-control" id="maxage" placeholder="80" ng-model="formData.maxAge">
                         </div>
 
                         <div class="form-group">
-                            <label for="language">Favorite Language</label>
-                            <input type="text" class="form-control" id="language" placeholder="Fortran" ng-model="formData.favlang">
+                            <label for="favlang">Favorite Language</label>
+                            <input type="text" class="form-control" id="favlang" placeholder="Fortran" ng-model="formData.favlang">
                         </div>
 
                         <div class="form-group">
-                            <label class="checkbox">Include Only HTML5 Verified Locations?</label>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" name="optionsRadios" id="radiomale" value="True"> True
+                                    <input type="checkbox" name="verified" id="radiomale" value="True" ng-model="formData.verified"> <strong>Include Only HTML5 Verified Locations?</strong>
                                 </label>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Search</button>
+                        <button type="submit" class="btn btn-danger btn-block" ng-click="queryUsers()">Search</button>
                     </form>
                 </div>
                 <div class="panel-footer">

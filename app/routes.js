@@ -48,7 +48,7 @@ module.exports = function(app) {
                 maxDistance: distance * 1609.34,
                 spherical: true});
 
-            console.log("test");
+            console.log("testlocation");
         }
 
         // ...include filter by Gender (all options)
@@ -59,7 +59,6 @@ module.exports = function(app) {
         // ...include filter by Min Age
         if(minAge){
             query = query.where('age').gt(minAge);
-            console.log("Test")
         }
 
         // ...include filter by Max Age
