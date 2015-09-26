@@ -8,8 +8,10 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
     var lat = 0;
     var long = 0;
 
+    // Set initial coordinates to the center of the US
     $scope.formData.longitude = -98.350;
     $scope.formData.latitude = 39.500;
+
     // Get User's Location on Window Load (uses ngGeolocation)
     geolocation.getLocation().then(function(data){
         coords = {lat:data.coords.latitude, long:data.coords.longitude};
@@ -19,8 +21,6 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
         $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
         $scope.formData.htmlverified = "Yep (Thanks for giving us real data!)";
         gservice.refresh(coords.lat, coords.long);
-
-
     });
 
     // Get Coordinates based on clicks
@@ -40,8 +40,7 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
             gender: $scope.formData.gender,
             age: $scope.formData.age,
             favlang: $scope.formData.favlang,
-            latitude: $scope.formData.latitude,
-            longitude: $scope.formData.longitude,
+            location: [$scope.formData.longitude, $scope.formData.latitude],
             htmlverified: $scope.formData.htmlverified
         };
         // Saves the user data to the db

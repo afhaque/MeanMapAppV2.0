@@ -1,22 +1,26 @@
-/**
- * Created by Ahmed on 9/18/2015.
- */
 var mongoose    = require('mongoose');
 var Schema      = mongoose.Schema;
 
+// Create User Location Schema
 var UserSchema = new Schema({
     username: String,
     gender: String,
     age: Number,
     favlang: String,
-    longitude: {type: Number, default: 65.901224},
-    latitude: {type: Number, default: -46.629026},
+    location: [Number],
+/*    location: {
+        type: {
+            type: String,
+            default: 'Point'
+        },
+        coordinates: [Number] // Longitude, Latitude,
+    },*/
     htmlverified: String,
     created_at: {type: Date, default: Date.now},
-    updated_at: {type: Date, default: Date.now},
-    popup: String
+    updated_at: {type: Date, default: Date.now}
 });
 
+// Append current datetime for created_at
 UserSchema.pre('save', function(next){
     now = new Date();
     this.updated_at = now;
@@ -25,5 +29,8 @@ UserSchema.pre('save', function(next){
     }
     next();
 });
+
+// Indexes this schema in geoJSON format
+UserSchema.index({location: '2dsphere'});
 
 module.exports = mongoose.model('scotch-user', UserSchema);

@@ -1,9 +1,13 @@
 {
-    "private": true,
-    "devDependencies": {
-        "express": "~4.7.2",
-        "mongoose": "~3.6.2",
-        "morgan": "~1.2.2",
+    "name": "MeanMapsApp",
+    "version": "1.0.0",
+    "description": "Demo app showing the use of Google Maps in MEAN Apps",
+    "main": "server.js",
+    "author": "Ahmed Haque",
+    "dependencies" : {
+        "express"    : "~4.7.2",
+        "mongoose"   : "~4.1.0",
+        "morgan"     : "~1.2.2",
         "body-parser": "~1.5.2",
         "jsonwebtoken": "^5.0.2",
         "jade": "^1.1.5",

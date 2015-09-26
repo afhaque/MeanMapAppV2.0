@@ -1,7 +1,3 @@
-/**
- * Created by Ahmed on 9/18/2015.
- */
-
 module.exports = {
 
     ec2:

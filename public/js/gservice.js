@@ -62,7 +62,7 @@ angular.module('gservice', [])
                     '<b>Gender</b>:' + user.gender + '<br><b>Favorite Language</b>:' + user.favlang + '</p>';
 
                 locations.push(new Location(
-                    new google.maps.LatLng(user.latitude, user.longitude),
+                    new google.maps.LatLng(user.location[1], user.location[0]),
                     new google.maps.InfoWindow({
                         content: contentString,
                         maxWidth: 320
