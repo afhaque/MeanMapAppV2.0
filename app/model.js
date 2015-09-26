@@ -3,18 +3,11 @@ var Schema      = mongoose.Schema;
 
 // Create User Location Schema
 var UserSchema = new Schema({
-    username: String,
+    username: {type: String, required: true} ,
     gender: String,
     age: Number,
     favlang: String,
-    location: [Number],
-/*    location: {
-        type: {
-            type: String,
-            default: 'Point'
-        },
-        coordinates: [Number] // Longitude, Latitude,
-    },*/
+    location: {type: [Number], required: true},
     htmlverified: String,
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}

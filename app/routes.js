@@ -44,7 +44,10 @@ module.exports = function(app) {
 
         // ...include filter by Max Distance (converting miles to meters)
         if(distance){
-            query = query.where('location').near({ center: [-88.003, 44.500], maxDistance: distance});
+            query = query.where('location').near({ center: {type: 'Point', coordinates: [-88.003, 44.500]},
+                maxDistance: distance * 1609.34,
+                spherical: true});
+
             console.log("test");
         }
 
