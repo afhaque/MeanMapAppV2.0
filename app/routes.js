@@ -42,7 +42,7 @@ module.exports = function(app) {
         var minAge          = req.body.minAge;
         var maxAge          = req.body.maxAge;
         var favLang         = req.body.favlang;
-        var reqVerified     = req.body.htmlverified;
+        var reqVerified     = req.body.reqVerified;
 
         // Open a generic Mongoose Query
         var query = User.find({});
@@ -79,7 +79,8 @@ module.exports = function(app) {
 
         // ...include filter for HTML5 Verified Locations
         if(reqVerified){
-            query = query.where('htmlverified').equals(true);
+            console.log("verified");
+            query = query.where('htmlverified').equals("Yep (Thanks for giving us real data!)");
         }
 
         // Execute Query and Return the Query Results
