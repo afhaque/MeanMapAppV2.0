@@ -45,24 +45,29 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
         console.log("END TEST;");
         // Assemble Query Body
         queryBody = {
-            location: [$scope.formData.longitude, $scope.formData.latitude],
-            distance: $scope.formData.distance,
+            longitude: parseFloat($scope.formData.longitude),
+            latitude: parseFloat($scope.formData.latitude),
+            distance: parseFloat($scope.formData.distance),
             minAge: $scope.formData.minage,
             maxAge: $scope.formData.maxage,
             favlang: $scope.formData.favlang,
             reqVerified: $scope.formData.verified
         };
 
-        console.log(queryBody);
-        console.log(queryBody.location[0]);
+/*
+        console.log(JSON.stringify(queryBody));
+*/
 
         // Do an HTTP call to get the filtered JSON
         $http.post('/query', queryBody)
             .success(function(queryResults){
+/*
+                console.log(JSON.stringify(queryResults));
+*/
 /*                console.log(queryBody.location[0]);
                 console.log(queryBody.location[1]);*/
                 // Pass the filtered results to the Google Map Service and refresh the map
-                gservice.refresh(parseFloat(queryBody.location[1]), parseFloat(queryBody.location[0]), queryBody);
+                gservice.refresh(queryBody.latitude, queryBody.longitude, queryBody);
             })
             .error(function(queryResults){
                 console.log('Error ' + queryResults);

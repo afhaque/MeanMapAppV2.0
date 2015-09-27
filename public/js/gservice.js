@@ -27,7 +27,7 @@ angular.module('gservice', [])
 
             if (query){
                 // Pulls the locations from the API and converts them into map coordinates
-                locations = responseToLocations(query);
+                locations = filteredQuery(query);
 
                 // Initializes the Map
                 initialize(latitude, longitude);
@@ -58,6 +58,20 @@ angular.module('gservice', [])
                 latlngbounds.extend(n.latlon);
             });
             return latlngbounds;
+        }
+
+        function filteredQuery(response){
+            var locations = [];
+
+            // Loop through all of the locations
+            for(var i= 0; i < response.length; i++) {
+                var user = response[i];
+
+                locations.push(new Location(
+                    new google.maps.LatLng(user.latitude, user.longitude)
+                ))
+            }
+            return locations;
         }
 
         function responseToLocations(response){

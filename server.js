@@ -13,7 +13,7 @@ var app             = express();
 
 // Express Configuration
 // =====================================================
-mongoose.connect(database.mongolab.url);
+mongoose.connect(database.local.url);
 
 // Template Engine
 app.set('views', path.join(__dirname, './app/views'));
