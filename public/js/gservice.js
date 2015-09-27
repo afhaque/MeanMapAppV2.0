@@ -30,7 +30,7 @@ angular.module('gservice', [])
                 locations = filteredQuery(query);
 
                 // Initializes the Map
-                initialize(latitude, longitude);
+                initialize(latitude, longitude, true);
             }
 
             else {
@@ -41,7 +41,7 @@ angular.module('gservice', [])
                     locations = responseToLocations(response);
 
                     // Initializes the Map
-                    initialize(latitude, longitude);
+                    initialize(latitude, longitude, false);
                 }).error(function(){});
             }
 
@@ -122,19 +122,28 @@ angular.module('gservice', [])
             this.favlang = favlang
         }
 
-        function initialize(latitude, longitude) {
+        function initialize(latitude, longitude, filter) {
+
             var myLatLng = {lat: startLat, lng: startLng};
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 3,
                 center: myLatLng
             });
 
+            if(filter){
+                icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+            }
+            else{
+                icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+            }
+
+
             locations.forEach(function(n, i){
                var marker = new google.maps.Marker({
                    position: n.latlon,
                    map: map,
                    title: "Big Map",
-                   icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                   icon: icon,
                });
 
                 // Clicking on a Marker

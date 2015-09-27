@@ -3,6 +3,9 @@ var User            = require('./model.js');
 
 module.exports = function(app) {
 
+// Redirect Route
+// =======================================================
+
 // GET Routes
 // =======================================================
     // Retrieve JSON records for all users in the database
@@ -59,12 +62,14 @@ module.exports = function(app) {
 
         // ...include filter by Min Age
         if(minAge){
-            query = query.where('age').gt(minAge);
+            console.log(minAge);
+            query = query.where('age').gte(minAge);
         }
 
         // ...include filter by Max Age
         if(maxAge){
-            query = query.where('age').lt(maxAge);
+            console.log(maxAge);
+            query = query.where('age').lte(maxAge);
         }
 
         // ...include filter by Favorite Language

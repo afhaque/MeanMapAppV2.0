@@ -33,6 +33,10 @@ app.use(methodOverride());
 // =====================================================
 require('./app/routes.js')(app);
 
+app.all('*', function(req, res){
+    res.redirect('/#/join');
+});
+
 app.use(function(req, res){
     res.render('404', {url:req.url}); // 404 handling
 });

@@ -34,15 +34,6 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
 
     $scope.queryUsers = function(){
 
-        console.log("THIS IS A TEST for QueryBody");
-        console.log("lat: " + $scope.formData.latitude);
-        console.log("long: " + $scope.formData.longitude);
-        console.log("distance: " + $scope.formData.distance);
-        console.log("minAge: " + $scope.formData.minage);
-        console.log("maxAge: " + $scope.formData.maxage);
-        console.log("favLang: " + $scope.formData.favlang);
-        console.log("reqVerified: " + $scope.formData.verified);
-        console.log("END TEST;");
         // Assemble Query Body
         queryBody = {
             longitude: parseFloat($scope.formData.longitude),
