@@ -20,6 +20,7 @@
     <script src="../bower_components/jquery/src/jquery.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
     <script src="js/app.js"></script>
     <script src="js/gservice.js"></script>
     <script src="js/addCtrl.js"></script>
@@ -35,8 +36,8 @@
     <!-- Header Menu  -->
     <div class="header">
         <ul class="nav nav-pills pull-right">
-            <li class="active"><a href="">Join the Team</a></li>
-            <li><a href="/index3.html">Find Teammates</a></li>
+            <li><a href="/#/join">Join the Team</a></li>
+            <li><a href="/#/find">Find Teammates</a></li>
         </ul>
         <h3 class="text-muted">The Scotch MEAN MapApp</h3>
     </div>
@@ -47,62 +48,8 @@
         <div class="col-md-7">
             <div id="map"></div>
         </div>
-        <!-- Post Form -->
-        <div class="col-md-5">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="panel-title text-center">Join the Scotch Team!</h2>
-                </div>
-
-                <div class="panel-body">
-                    <form name ="addForm">
-                        <div class="form-group">
-                            <label for="username">Username <span class="badge">Required</span></label>
-                            <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
-                        </div>
-                        <label class="radio control-label">Gender</label>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="radiomale" value="Male" ng-model="formData.gender">
-                                Male
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="radiofemale" value="Female" ng-model="formData.gender">
-                                Female
-                            </label>
-                        </div>
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="optionsRadios" id="radioother" value="What's it to ya?" ng-model="formData.gender">
-                                What's it to ya?
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label for="age">Age</label>
-                            <input type="number" class="form-control" id="age" placeholder="72" ng-model="formData.age">
-                        </div>
-                        <div class="form-group">
-                            <label for="language">Favorite Language</label>
-                            <input type="text" class="form-control" id="language" placeholder="Fortran" ng-model="formData.favlang">
-                        </div>
-                        <div class="form-group">
-                            <label for="latitude">Latitude</label>
-                            <input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="longitude">Longitude</label>
-                            <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="verified">HTML5 Verified Location?</label>
-                            <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
-                        </div>
-                        <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>
-                    </form>
-                </div>
-            </div>
+        <!-- Form -->
+        <div ng-view>
         </div>
     </div>
     <hr/>

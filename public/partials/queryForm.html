@@ -1,0 +1,71 @@
+<!-- Post Form -->
+<div class="col-md-5">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title text-center">Find Teammates! (Map Query)</h2>
+        </div>
+
+        <div class="panel-body">
+            <form name ="addForm">
+                <div class="form-group">
+                    <label for="latitude">Your Location</span></label>
+                    <input type="text" class="form-control" id="latitude" placeholder="39.5" ng-model="formData.latitude" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="longitude">Your Location</span></label>
+                    <input type="text" class="form-control" id="longitude" placeholder="-98.35" ng-model="formData.longitude" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="distance">Max. Distance (miles)</span></label>
+                    <input type="text" class="form-control" id="distance" placeholder="500" ng-model="formData.distance">
+                </div>
+
+                <label>Gender</label>
+                <div class="form-group">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="optionsRadios" id="checkmale" value="Male" ng-model="formData.male">
+                        Male
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="optionsRadios" id="checkfemale" value="Female" ng-model="formData.female">
+                        Female
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="optionsRadios" id="checkother" value="What's it to ya?" ng-model="formData.other">
+                        What's it to ya?
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="minage">Min. Age</label>
+                    <input type="number" class="form-control" id="minage" placeholder="5" ng-model="formData.minage">
+                </div>
+
+                <div class="form-group">
+                    <label for="maxage">Max Age</label>
+                    <input type="number" class="form-control" id="maxage" placeholder="80" ng-model="formData.maxAge">
+                </div>
+
+                <div class="form-group">
+                    <label for="favlang">Favorite Language</label>
+                    <input type="text" class="form-control" id="favlang" placeholder="Fortran" ng-model="formData.favlang">
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="verified" id="radiomale" value="True" ng-model="formData.verified"> <strong>Include Only HTML5 Verified Locations?</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-danger btn-block" ng-click="queryUsers()">Search</button>
+            </form>
+        </div>
+        <div ng-hide=true class="panel-footer">
+            <p class="text-center">Hot Dang! We Found 45 Teammates.</p>
+        </div>
+    </div>
+</div>

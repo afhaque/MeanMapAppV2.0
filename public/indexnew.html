@@ -1,0 +1,135 @@
+<!doctype html>
+<html class="no-js" lang="" ng-app="meanMapApp">
+<head>
+    <meta charset="utf-8">
+    <title>Scotch MEAN Map</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="style.css"/>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s"></script>
+
+    <!-- Modernizr -->
+    <script src="../bower_components/modernizr/bin/modernizr"></script>
+
+    <!-- JS / Angular -->
+    <script src="../bower_components/jquery/src/jquery.js"></script>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/gservice.js"></script>
+    <script src="js/addCtrl.js"></script>
+    <script src="js/queryCtrl.js"></script>
+</head>
+
+<body ng-controller="queryCtrl">
+<!--[if lt IE 10]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<div class="container">
+    <!-- Header Menu  -->
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="/">Join the Team</a></li>
+            <li class="active"><a href="">Find Teammates</a></li>
+        </ul>
+        <h3 class="text-muted">The Scotch MEAN MapApp</h3>
+    </div>
+
+    <!-- Map and Post Form -->
+    <div class="row marketing">
+        <!-- Map -->
+        <div class="col-md-7">
+            <div id="map"></div>
+        </div>
+        <!-- Post Form -->
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title text-center">Find Teammates! (Map Query)</h2>
+                </div>
+
+                <div class="panel-body">
+                    <form name ="addForm">
+                        <div class="form-group">
+                            <label for="latitude">Your Location</span></label>
+                            <input type="text" class="form-control" id="latitude" placeholder="39.5" ng-model="formData.latitude" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="longitude">Your Location</span></label>
+                            <input type="text" class="form-control" id="longitude" placeholder="-98.35" ng-model="formData.longitude" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="distance">Max. Distance (miles)</span></label>
+                            <input type="text" class="form-control" id="distance" placeholder="500" ng-model="formData.distance">
+                        </div>
+
+                        <label>Gender</label>
+                        <div class="form-group">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="optionsRadios" id="checkmale" value="Male" ng-model="formData.male">
+                                Male
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="optionsRadios" id="checkfemale" value="Female" ng-model="formData.female">
+                                Female
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="optionsRadios" id="checkother" value="What's it to ya?" ng-model="formData.other">
+                                What's it to ya?
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="minage">Min. Age</label>
+                            <input type="number" class="form-control" id="minage" placeholder="5" ng-model="formData.minage">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxage">Max Age</label>
+                            <input type="number" class="form-control" id="maxage" placeholder="80" ng-model="formData.maxAge">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="favlang">Favorite Language</label>
+                            <input type="text" class="form-control" id="favlang" placeholder="Fortran" ng-model="formData.favlang">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="verified" id="radiomale" value="True" ng-model="formData.verified"> <strong>Include Only HTML5 Verified Locations?</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-block" ng-click="queryUsers()">Search</button>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <p class="text-center">Hot Dang! We Found 45 Teammates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p class="text-center"><span class="glyphicon glyphicon-check"></span> Created by Ahmed Haque for Scotch IO -
+            <a href="https://scotch.io/">App Tutorial</a> | <a href="https://github.com/afhaque/MeanMapAppV2.0">Github Repo</a></p>
+    </div>
+</div>
+
+<!-- Other Scripts -->
+<script src="../bower_components/holderjs/holder.js"></script>
+
+</body>
+</html>
