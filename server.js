@@ -1,6 +1,3 @@
-/**
- * Created by Ahmed on 9/18/2015.
- */
 var express         = require('express');
 var mongoose        = require('mongoose');
 var port            = process.env.PORT || 3000;
@@ -13,7 +10,7 @@ var app             = express();
 
 // Express Configuration
 // =====================================================
-mongoose.connect(database.mongolab.url);
+mongoose.connect(database.local.url);
 
 // Template Engine
 app.set('views', path.join(__dirname, './app/views'));
