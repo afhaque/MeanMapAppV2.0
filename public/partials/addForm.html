@@ -8,7 +8,7 @@
         <div class="panel-body">
             <form name ="addForm">
                 <div class="form-group">
-                    <label for="username">Username</span></label>
+                    <label for="username">Username <span class="badge">All Fields Required</span></label>
                     <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
                 </div>
                 <label class="radio control-label">Gender</label>
@@ -50,7 +50,7 @@
                     <label for="verified">HTML5 Verified Location?</label>
                     <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>
+                <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>
             </form>
         </div>
     </div>

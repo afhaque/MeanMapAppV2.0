@@ -25,6 +25,7 @@
     <script src="js/gservice.js"></script>
     <script src="js/addCtrl.js"></script>
     <script src="js/queryCtrl.js"></script>
+    <script src="js/headerCtrl.js"></script>
 </head>
 
 <body>
@@ -34,10 +35,10 @@
 
 <div class="container">
     <!-- Header Menu  -->
-    <div class="header">
+    <div class="header" ng-controller="headerCtrl">
         <ul class="nav nav-pills pull-right">
-            <li><a href="/#/join">Join the Team</a></li>
-            <li><a href="/#/find">Find Teammates</a></li>
+            <li ng-class="{ active: isActive('/join')}"><a href="/#/join">Join the Team</a></li>
+            <li ng-class="{ active: isActive('/find')}"><a href="/#/find">Find Teammates</a></li>
         </ul>
         <h3 class="text-muted">The Scotch MEAN MapApp</h3>
     </div>
