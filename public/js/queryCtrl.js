@@ -54,20 +54,11 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
             reqVerified: $scope.formData.verified
         };
 
-/*
-        console.log(JSON.stringify(queryBody));
-*/
-
         // Do an HTTP call to get the filtered JSON
         $http.post('/query', queryBody)
             .success(function(queryResults){
-/*
-                console.log(JSON.stringify(queryResults));
-*/
-/*                console.log(queryBody.location[0]);
-                console.log(queryBody.location[1]);*/
                 // Pass the filtered results to the Google Map Service and refresh the map
-                gservice.refresh(queryBody.latitude, queryBody.longitude, queryBody);
+                gservice.refresh(queryBody.latitude, queryBody.longitude, queryResults);
             })
             .error(function(queryResults){
                 console.log('Error ' + queryResults);

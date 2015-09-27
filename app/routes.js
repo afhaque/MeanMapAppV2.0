@@ -11,6 +11,8 @@ module.exports = function(app) {
         query.exec(function(err, users){
             if(err)
                 res.send(err);
+
+            console.log(JSON.stringify(users));
             res.json(users);
         });
     });
@@ -36,8 +38,8 @@ module.exports = function(app) {
         var gender          = req.body.gender;
         var minAge          = req.body.minAge;
         var maxAge          = req.body.maxAge;
-        var favLang         = req.body.favLang;
-        var reqVerified     = req.body.htmlVerified;
+        var favLang         = req.body.favlang;
+        var reqVerified     = req.body.htmlverified;
 
         // Open a generic Mongoose Query
         var query = User.find({});
@@ -80,6 +82,7 @@ module.exports = function(app) {
             if(err)
                 res.send(err);
 
+            console.log(JSON.stringify(users));
             res.json(users);
         });
     });
