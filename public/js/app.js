@@ -6,5 +6,5 @@ var app = angular.module('meanMapApp', ['addCtrl', 'queryCtrl', 'geolocation', '
         }).when('/find', {
             controller: 'queryCtrl',
             templateUrl: 'partials/queryForm.html',
-        });
+        }).otherwise({redirectTo:'/join'})
     });

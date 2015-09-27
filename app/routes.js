@@ -62,13 +62,11 @@ module.exports = function(app) {
 
         // ...include filter by Min Age
         if(minAge){
-            console.log(minAge);
             query = query.where('age').gte(minAge);
         }
 
         // ...include filter by Max Age
         if(maxAge){
-            console.log(maxAge);
             query = query.where('age').lte(maxAge);
         }
 
@@ -79,7 +77,6 @@ module.exports = function(app) {
 
         // ...include filter for HTML5 Verified Locations
         if(reqVerified){
-            console.log("verified");
             query = query.where('htmlverified').equals("Yep (Thanks for giving us real data!)");
         }
 

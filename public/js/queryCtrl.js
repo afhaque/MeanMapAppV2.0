@@ -27,6 +27,7 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
     var lat = $scope.formData.latitude;
     var lng = $scope.formData.longitude;
     var distance = $scope.formData.distance;
+    var gender = [$scope.formData.male, $scope.formData.female, $scope.formData.other];
     var minAge = $scope.formData.minage;
     var maxAge = $scope.formData.maxage;
     var favLang = $scope.formData.favlang;
@@ -39,6 +40,9 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
             longitude: parseFloat($scope.formData.longitude),
             latitude: parseFloat($scope.formData.latitude),
             distance: parseFloat($scope.formData.distance),
+/*
+            gender: [$scope.formData.male, $scope.formData.female, $scope.formData.other],
+*/
             minAge: $scope.formData.minage,
             maxAge: $scope.formData.maxage,
             favlang: $scope.formData.favlang,
@@ -48,7 +52,6 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
         // Do an HTTP call to get the filtered JSON
         $http.post('/query', queryBody)
             .success(function(queryResults){
-                console.log(queryBody.reqVerified);
                 // Pass the filtered results to the Google Map Service and refresh the map
                 gservice.refresh(queryBody.latitude, queryBody.longitude, queryResults);
             })
