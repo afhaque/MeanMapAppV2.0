@@ -37,10 +37,6 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
 
     $scope.queryUsers = function(){
 
-        console.log($scope.formData.male);
-        console.log($scope.formData.female);
-        console.log($scope.formData.other);
-
         // Assemble Query Body
         queryBody = {
             longitude: parseFloat($scope.formData.longitude),
@@ -60,6 +56,7 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
             .success(function(queryResults){
                 // Pass the filtered results to the Google Map Service and refresh the map
                 gservice.refresh(queryBody.latitude, queryBody.longitude, queryResults);
+                $scope.queryCount = queryResults.length;
             })
             .error(function(queryResults){
                 console.log('Error ' + queryResults);

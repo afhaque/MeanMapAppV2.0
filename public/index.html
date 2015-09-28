@@ -1,9 +1,9 @@
 <!doctype html>
-<html class="no-js" lang="" ng-app="meanMapApp">
+<html class="no-js" ng-app="meanMapApp">
 <head>
     <meta charset="utf-8">
     <title>Scotch MEAN Map</title>
-    <meta name="description" content="">
+    <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSS -->
@@ -16,11 +16,13 @@
     <!-- Modernizr -->
     <script src="../bower_components/modernizr/bin/modernizr"></script>
 
-    <!-- JS / Angular -->
-    <script src="../bower_components/jquery/src/jquery.js"></script>
+    <!-- JS Source -->
+    <script src="../bower_components/jquery/jquery.js"></script>
     <script src="../bower_components/angular/angular.js"></script>
-    <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
     <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+
+    <!-- Angular Files -->
     <script src="js/app.js"></script>
     <script src="js/gservice.js"></script>
     <script src="js/addCtrl.js"></script>
@@ -36,22 +38,28 @@
 <div class="container">
     <!-- Header Menu  -->
     <div class="header" ng-controller="headerCtrl">
+
+        <!-- Header items are made active upon selection -->
         <ul class="nav nav-pills pull-right">
-            <li ng-class="{ active: isActive('/join')}"><a href="/#/join">Join the Team</a></li>
+             <li ng-class="{ active: isActive('/join')}"><a href="/#/join">Join the Team</a></li>
             <li ng-class="{ active: isActive('/find')}"><a href="/#/find">Find Teammates</a></li>
         </ul>
+
+        <!-- Header Title -->
         <h3 class="text-muted">The Scotch MEAN MapApp</h3>
     </div>
 
-    <!-- Map and Post Form -->
-    <div class="row marketing">
-        <!-- Map -->
+    <!-- Map and Side Panel -->
+    <div class="row content">
+
+        <!-- Google Map -->
         <div class="col-md-7">
             <div id="map"></div>
         </div>
-        <!-- Form -->
-        <div ng-view>
-        </div>
+
+        <!-- Side Panel (Controlled by ng-view) -->
+        <div ng-view></div>
+
     </div>
     <hr/>
 
@@ -60,10 +68,8 @@
         <p class="text-center"><span class="glyphicon glyphicon-check"></span> Created by Ahmed Haque for Scotch IO -
             <a href="https://scotch.io/">App Tutorial</a> | <a href="https://github.com/afhaque/MeanMapAppV2.0">Github Repo</a></p>
     </div>
-</div>
 
-<!-- Other Scripts -->
-<script src="../bower_components/holderjs/holder.js"></script>
+</div>
 
 </body>
 </html>
