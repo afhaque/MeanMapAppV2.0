@@ -1,5 +1,5 @@
 # MeanMapAppV2.0
-Basic app demonstrating MEAN (Mongo, Express, Angular, and Node) Integration with Google Maps. App allows users to add themselves to the map with basic information and HTML5 validated geocoordinates. Future versions of the app will also include a section on geospatial filtering of the results. Created for Scotch IO Tutorial. 
+Basic app demonstrating MEAN (Mongo, Express, Angular, and Node) Integration with Google Maps. App allows users to add themselves to the map with basic information and HTML5 validated geocoordinates. App also provides a panel for performing geospatial or parameter filtering of the map. Created for Scotch IO Tutorial.
 
 ![appimage](https://raw.githubusercontent.com/afhaque/MeanMapAppV2.0/master/Resources/AppImage.png)
 

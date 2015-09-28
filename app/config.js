@@ -1,11 +1,6 @@
-module.exports = {
+// Sets the MongoDB Database options
 
-    ec2:
-    {
-        name: "scotch-user-map-ec2",
-        url: "mongodb://sensodx:jmcdevitt@ec2-52-2-231-180.compute-1.amazonaws.com/sensodx-api-prod",
-        port: 27017
-    },
+module.exports = {
 
     mongolab:
     {
