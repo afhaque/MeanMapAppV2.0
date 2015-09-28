@@ -27,7 +27,9 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
     var lat = $scope.formData.latitude;
     var lng = $scope.formData.longitude;
     var distance = $scope.formData.distance;
-    var gender = [$scope.formData.male, $scope.formData.female, $scope.formData.other];
+    var male = $scope.formData.male;
+    var female = $scope.formData.female;
+    var other = $scope.formData.other;
     var minAge = $scope.formData.minage;
     var maxAge = $scope.formData.maxage;
     var favLang = $scope.formData.favlang;
@@ -35,14 +37,18 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
 
     $scope.queryUsers = function(){
 
+        console.log($scope.formData.male);
+        console.log($scope.formData.female);
+        console.log($scope.formData.other);
+
         // Assemble Query Body
         queryBody = {
             longitude: parseFloat($scope.formData.longitude),
             latitude: parseFloat($scope.formData.latitude),
             distance: parseFloat($scope.formData.distance),
-/*
-            gender: [$scope.formData.male, $scope.formData.female, $scope.formData.other],
-*/
+            male: $scope.formData.male,
+            female: $scope.formData.female,
+            other: $scope.formData.other,
             minAge: $scope.formData.minage,
             maxAge: $scope.formData.maxage,
             favlang: $scope.formData.favlang,

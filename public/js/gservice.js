@@ -69,7 +69,7 @@ angular.module('gservice', [])
 
                 // Create popup window
                 var  contentString = '<p><b>Username</b>: ' + user.username + '<br><b>Age</b>: ' + user.age + '<br>' +
-                    '<b>Gender</b>:' + user.gender + '<br><b>Favorite Language</b>:' + user.favlang + '</p>';
+                    '<b>Gender</b>: ' + user.gender + '<br><b>Favorite Language</b>: ' + user.favlang + '</p>';
 
                 locations.push(new Location(
                     new google.maps.LatLng(user.location[1], user.location[0]),
