@@ -6,7 +6,7 @@
         </div>
 
         <div class="panel-body">
-            <form name ="addForm">
+            <form name ="addForm" novalidate>
                 <div class="form-group">
                     <label for="username">Username <span class="badge">All Fields Required</span></label>
                     <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
@@ -47,7 +47,7 @@
                     <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="verified">HTML5 Verified Location?</label>
+                    <label for="verified">HTML5 Verified Location? <span><button ng-click="refreshLoc()" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-refresh"></span></button></span></label>
                     <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
                 </div>
                 <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>

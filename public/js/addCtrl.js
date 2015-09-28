@@ -31,6 +31,20 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
         });
     });
 
+    // Get User's HTML5 Verified Location
+    $scope.refreshLoc = function(){
+        // Get User's Location on Window Load (uses ngGeolocation)
+        geolocation.getLocation().then(function(data){
+            coords = {lat:data.coords.latitude, long:data.coords.longitude};
+
+            // Display coordinates in location textbox rounded to three decimal points
+            $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
+            $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
+            $scope.formData.htmlverified = "Yep (Thanks for giving us real data!)";
+            gservice.refresh(coords.lat, coords.long);
+        });
+    };
+
     // Creates a new user using all of the form fields
     $scope.createUser = function() {
         // Grabs all of the text box fields
