@@ -6,7 +6,7 @@ Basic app demonstrating MEAN (Mongo, Express, Angular, and Node) Integration wit
 
 ## Demo Link
 
-http://ec2-52-3-241-230.compute-1.amazonaws.com:3000/#/find
+http://ec2-52-3-241-230.compute-1.amazonaws.com:3000/#/join
  
 ## Instructions to run locally 
 
