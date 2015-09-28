@@ -79,13 +79,12 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
                 $scope.formData.age = "";
                 $scope.formData.favlang = "";
 
+                // Refresh the map with new data
+                gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
             })
             .error(function (data) {
                 console.log('Error: ' + data);
             });
-
-        // Refresh the map with new data
-        gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
     };
 });
 
