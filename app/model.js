@@ -10,7 +10,7 @@ var UserSchema = new Schema({
     favlang: {type: String, required: true},
     location: {type: [Number], required: true}, // [Long, Lat]
     htmlverified: String,
-    created_at: {type: Dagete, default: Date.now},
+    created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}
 });
 
