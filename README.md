@@ -5,7 +5,7 @@ Basic application demonstrating MEAN (Mongo, Express, Angular, and Node) Integra
 
 ## Demo Link
 
-https://mean-google-maps.herokuapp.com/#/find
+https://mean-google-maps.herokuapp.com/#/join
  
 ## Instructions to run locally 
 
