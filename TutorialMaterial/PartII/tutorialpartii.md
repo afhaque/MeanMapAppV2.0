@@ -1,530 +1,749 @@
 ## Introduction
 
-## Quick Primer on MongoDB Geo-Query Tools
+Welcome back! 
+
+Last time, we created an application that integrated Google Maps directly into MEAN stack code. The app provided us a panel to create users, tag their location based on latitude and longitude, and validate their whereabouts using HTML5 geolocation.
+
+As of this writing, over 150 users have added themselves to our map, with diverse locations strewn from San Francisco to Melbourne -- which is already pretty cool when you think about it!
+
+![1-MapCurrent][1]
+
+Today, we'll be taking our work a step further by adding a new control panel that allows us to filter users based on a variety of fields. The final product will allow us to query our map based on gender, age, favorite language, proximity, and whether a user's location has been HTML5 verified. Additionally, this tutorial will also give us a nice opportunity to discuss some of MongoDB's geospatial query tools.
+
+As you follow along, feel encouraged to grab the source code. Also, if you're joining us for the first time, you can download the code from Part I using this link.
 
 ## Revised App Skeleton
 
+To begin, let's make some adjustments to our app's structure. Go ahead and create a new `queryCtrl.js` file as well as a directory called `partials`, which will hold the files `addForm.html` and `queryForm.html`. 
+
+<pre><code class="language-bash">
+MapApp
+-- app // BACKEND 
+---- model.js 
+---- routes.js 
+
+-- public // FRONTEND
+---- index.html 
+---- js
+------ app.js 
+------ addCtrl.js 
+------ queryCtrl.js // *new* 
+------ gservice.js 
+---- style.css
+---- partials // *new*
+------ addForm.html // *new*
+------ queryForm.html // *new*
+
+-- server.js // EXPRESS SERVER
+-- package.json
+</code></pre>
+
 ## Creating the Query View
 
-Initial app.js (now includes partial handling for queryForm)
+Since our app wil now have two separate control panels -- one for adding users and one for querying users, we're going to utilize Angular's routing module `ngRoute` to display the correct panel when needed. 
 
-    // Declares the initial angular module "meanMapApp". Module grabs other controllers and services. Note the use of ngRoute.
-    var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngRoute'])
-    
-        // Configures Angular routing -- showing the relevant view and controller when needed.
-        .config(function($routeProvider){
-    
-            // Join Team Control Panel
-            $routeProvider.when('/join', {
-                controller: 'addCtrl',
-                templateUrl: 'partials/addForm.html',
-    
-                // Find Teammates Control Panel
-            }).when('/find', {
-                templateUrl: 'partials/queryForm.html',
-    
-                // All else forward to the Join Team Control Panel
-            }).otherwise({redirectTo:'/join'})
-        });
+To do this, we're going to store the code associated with each panel in its own HTML partial. We'll then specify in our main Angular module (`app.js`) that our application should display the `queryForm` partial when the URL includes `/find` and the `addForm` partial for all other URLs. 
+
+Let's go ahead and extract the 'Add Form' code that previously found in our `index.html` file and paste it into the `addForm.html` file of our `partials` folder. 
+
+<pre><code class="language-markup">
+&lt;!-- addForm.html --&gt;
+        
+&lt;!-- "Join Team" (Post) Form --&gt;
+&lt;div class="col-md-5"&gt;
+
+    &lt;!-- Creates Main Panel --&gt;
+    &lt;div class="panel panel-default"&gt;
+
+        &lt;!-- Panel Title --&gt;
+        &lt;div class="panel-heading"&gt;
+            &lt;h2 class="panel-title text-center"&gt;Join the Scotch Team! &lt;span class="glyphicon glyphicon-map-marker"&gt;&lt;/span&gt;&lt;/h2&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Panel Body --&gt;
+        &lt;div class="panel-body"&gt;
+
+            &lt;!-- Creates Form (novalidate disables HTML validation, Angular will control) --&gt;
+            &lt;form name ="addForm" novalidate&gt;
+
+                &lt;!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope --&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="username"&gt;Username &lt;span class="badge"&gt;All fields required&lt;/span&gt;&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required&gt;
+                &lt;/div&gt;
+                &lt;label class="radio control-label"&gt;Gender&lt;/label&gt;
+                &lt;div class="radio"&gt;
+                    &lt;label&gt;
+                        &lt;input type="radio" name="optionsRadios" id="radiomale" value="Male" ng-model="formData.gender"&gt;
+                        Male
+                    &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div class="radio" required&gt;
+                    &lt;label&gt;
+                        &lt;input type="radio" name="optionsRadios" id="radiofemale" value="Female" ng-model="formData.gender"&gt;
+                        Female
+                    &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div class="radio"&gt;
+                    &lt;label&gt;
+                        &lt;input type="radio" name="optionsRadios" id="radioother" value="What&#039;s it to ya?" ng-model="formData.gender"&gt;
+                        What&#039;s it to ya?
+                    &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="age"&gt;Age&lt;/label&gt;
+                    &lt;input type="number" class="form-control" id="age" placeholder="72" ng-model="formData.age" required&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="language"&gt;Favorite Language&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="language" placeholder="Fortran" ng-model="formData.favlang" required&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="latitude"&gt;Latitude&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="longitude"&gt;Longitude&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;!-- Note RefreshLoc button tied to addCtrl. This requests a refresh of the HTML5 verified location. --&gt;
+                    &lt;label for="verified"&gt;HTML5 Verified Location? &lt;span&gt;&lt;button ng-click="refreshLoc()" class="btn btn-default btn-xs"&gt;&lt;span class="glyphicon glyphicon-refresh"&gt;&lt;/span&gt;&lt;/button&gt;&lt;/span&gt;&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly&gt;
+                &lt;/div&gt;
+
+                &lt;!-- Submit button. Note that its tied to createUser() function from addCtrl. Also note ng-disabled logic which prevents early submits.  --&gt;
+                &lt;button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid"&gt;Submit&lt;/button&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+Next, let's paste the code associated with our new Query Form into the `queryForm.html` of the same `partials` folder.
 
 
-queryForm.html partial
+<pre><code class="language-markup">
+&lt;!-- queryForm.html --&gt;
 
-    <!-- Find Teammates (Query) Form -->
-    <div class="col-md-5">
-    
-        <!-- Creates Main Panel -->
-        <div class="panel panel-default">
-    
-            <!-- Panel Title -->
-            <div class="panel-heading">
-                <h2 class="panel-title text-center">Find Teammates! (Map Query) <span class="glyphicon glyphicon-search"></span></h2>
-            </div>
-    
-            <!-- Panel Body -->
-            <div class="panel-body">
-    
-                <!-- Creates Form -->
-                <form name ="queryForm">
-    
-                    <!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope -->
-                    <div class="form-group">
-                        <label for="latitude">Your Latitude</label>
-                        <input type="text" class="form-control" id="latitude" placeholder="39.5" ng-model="formData.latitude" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="longitude">Your Longitude</label>
-                        <input type="text" class="form-control" id="longitude" placeholder="-98.35" ng-model="formData.longitude" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="distance">Max. Distance (miles)</label>
-                        <input type="text" class="form-control" id="distance" placeholder="500" ng-model="formData.distance">
-                    </div>
-    
-                    <!-- Note ng-true-value which translates check values into explicit gender strings -->
-                    <label>Gender</label>
-                    <div class="form-group">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" name="optionsRadios" id="checkmale" value="Male" ng-model="formData.male" ng-true-value = "'Male'">
-                            Male
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" name="optionsRadios" id="checkfemale" value="Female" ng-model="formData.female" ng-true-value="'Female'">
-                            Female
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" name="optionsRadios" id="checkother" value="What's it to ya?" ng-model="formData.other" ng-true-value="'What\'s it to ya?'">
-                            What's it to ya?
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label for="minage">Min. Age</label>
-                        <input type="number" class="form-control" id="minage" placeholder="5" ng-model="formData.minage">
-                    </div>
-                    <div class="form-group">
-                        <label for="maxage">Max Age</label>
-                        <input type="number" class="form-control" id="maxage" placeholder="80" ng-model="formData.maxage">
-                    </div>
-                    <div class="form-group">
-                        <label for="favlang">Favorite Language</label>
-                        <input type="text" class="form-control" id="favlang" placeholder="Fortran" ng-model="formData.favlang">
-                    </div>
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="verified" id="radiomale" value="True" ng-model="formData.verified"> <strong>Include Only HTML5 Verified Locations?</strong>
-                            </label>
-                        </div>
-                    </div>
-    
-                    <!-- Query button. Note that its tied to queryUsers() function from queryCtrl.  -->
-                    <button type="submit" class="btn btn-danger btn-block" ng-click="queryUsers()">Search</button>
-                </form>
-            </div>
-    
-            <!-- Footer panel for displaying count. Note how it will only display if queryCount is greater than 0 -->
-            <div ng-show="queryCount>0" class="panel-footer">
-                <p class="text-center">Hot Dang! We Found {{queryCount}} Teammates.</p>
-            </div>
-        </div>
-    </div>
+&lt;!-- Find Teammates (Query) Form --&gt;
+&lt;div class="col-md-5"&gt;
 
-addForm.html partial
+    &lt;!-- Creates Main Panel --&gt;
+    &lt;div class="panel panel-default"&gt;
 
-    <!-- "Join Team" (Post) Form -->
-    <div class="col-md-5">
-    
-        <!-- Creates Main Panel -->
-        <div class="panel panel-default">
-    
-            <!-- Panel Title -->
-            <div class="panel-heading">
-                <h2 class="panel-title text-center">Join the Scotch Team! <span class="glyphicon glyphicon-map-marker"></span></h2>
-            </div>
-    
-            <!-- Panel Body -->
-            <div class="panel-body">
-    
-                <!-- Creates Form (novalidate disables HTML validation, Angular will control) -->
-                <form name ="addForm" novalidate>
-    
-                    <!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope -->
-                    <div class="form-group">
-                        <label for="username">Username <span class="badge">All fields required</span></label>
-                        <input type="text" class="form-control" id="username" placeholder="OldandGold" ng-model="formData.username" required>
-                    </div>
-                    <label class="radio control-label">Gender</label>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="radiomale" value="Male" ng-model="formData.gender">
-                            Male
-                        </label>
-                    </div>
-                    <div class="radio" required>
-                        <label>
-                            <input type="radio" name="optionsRadios" id="radiofemale" value="Female" ng-model="formData.gender">
-                            Female
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="optionsRadios" id="radioother" value="What's it to ya?" ng-model="formData.gender">
-                            What's it to ya?
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" class="form-control" id="age" placeholder="72" ng-model="formData.age" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="language">Favorite Language</label>
-                        <input type="text" class="form-control" id="language" placeholder="Fortran" ng-model="formData.favlang" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="latitude">Latitude</label>
-                        <input type="text" class="form-control" id="latitude" value="39.500" ng-model="formData.latitude" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="longitude">Longitude</label>
-                        <input type="text" class="form-control" id="longitude" value="-98.350" ng-model="formData.longitude" readonly>
-                    </div>
-                    <div class="form-group">
-                        <!-- Note RefreshLoc button tied to addCtrl. This requests a refresh of the HTML5 verified location. -->
-                        <label for="verified">HTML5 Verified Location? <span><button ng-click="refreshLoc()" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-refresh"></span></button></span></label>
-                        <input type="text" class="form-control" id="verified" placeholder= "Nope (Thanks for spamming my map...)" ng-model="formData.htmlverified" readonly>
-                    </div>
-    
-                    <!-- Submit button. Note that its tied to createUser() function from addCtrl. Also note ng-disabled logic which prevents early submits.  -->
-                    <button type="submit" class="btn btn-danger btn-block" ng-click="createUser()" ng-disabled="addForm.$invalid">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
+        &lt;!-- Panel Title --&gt;
+        &lt;div class="panel-heading"&gt;
+            &lt;h2 class="panel-title text-center"&gt;Find Teammates! (Map Query) &lt;span class="glyphicon glyphicon-search"&gt;&lt;/span&gt;&lt;/h2&gt;
+        &lt;/div&gt;
 
-Revised index.html File 
+        &lt;!-- Panel Body --&gt;
+        &lt;div class="panel-body"&gt;
 
-    <!doctype html>
-    <!-- Declares meanMapApp as the starting Angular module -->
-    <html class="no-js" ng-app="meanMapApp">
-    <head>
-        <meta charset="utf-8">
-        <title>Scotch MEAN Map</title>
-        <meta name="description" content="An example demonstrating Google Map integration with MEAN Apps">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- CSS -->
-        <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
-        <link rel="stylesheet" href="style.css"/>
-    
-        <!-- Google Maps API -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s"></script>
-        <!-- Modernizr -->
-        <script src="../bower_components/modernizr/bin/modernizr"></script>
-        <!-- JS Source -->
-        <script src="../bower_components/jquery/jquery.js"></script>
-        <script src="../bower_components/angular/angular.js"></script>
-        <script src="../bower_components/angular-route/angular-route.js"></script>
-        <script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
-        <!-- Angular Source -->
-        <script src="js/app.js"></script>
-        <script src="js/addCtrl.js"></script>
-        <script src="js/gservice.js"></script>
-    
-    </head>
-    <!-- Removed ng-controller. Now this will be handled in app.js -->
-    <body>
-    <div class="container">
-        <div class="header">
-            <ul class="nav nav-pills pull-right">
-                <!-- Links to the two menu views included -->
-                <li active><a href="/#/join">Join the Team</a></li>
-                <li disabled><a href="/#/find">Find Teammates</a></li>
-            </ul>
-            <h3 class="text-muted">The Scotch MEAN MapApp</h3>
-        </div>
-        <!-- Map and Side Panel -->
-        <div class="row content">
-            <!-- Google Map -->
-            <div class="col-md-7">
-                <div id="map"></div>
-            </div>
-            <!-- Side Panel -- Now Handled by ng-view -->
-            <div ng-view></div>
-    
-        </div>
-        <hr/>
-        <!-- Footer -->
-        <div class="footer">
-            <p class="text-center"><span class="glyphicon glyphicon-check"></span> Created by Ahmed Haque for Scotch IO -
-                <a href="https://scotch.io/">App Tutorial</a> | <a href="https://github.com/afhaque/MeanMapAppV2.0">Github Repo</a></p>
-        </div>
-    </div>
-    </body>
-    </html>
+            &lt;!-- Creates Form --&gt;
+            &lt;form name ="queryForm"&gt;
 
-## Creating the Query Logic and Express Routes
+                &lt;!-- Text Boxes and Other User Inputs. Note ng-model binds the values to Angular $scope --&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="latitude"&gt;Your Latitude&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="latitude" placeholder="39.5" ng-model="formData.latitude" readonly&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="longitude"&gt;Your Longitude&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="longitude" placeholder="-98.35" ng-model="formData.longitude" readonly&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="distance"&gt;Max. Distance (miles)&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="distance" placeholder="500" ng-model="formData.distance"&gt;
+                &lt;/div&gt;
 
-Modifications to Route.js for handling query (uses query builder)
+                &lt;!-- Note ng-true-value which translates check values into explicit gender strings --&gt;
+                &lt;label&gt;Gender&lt;/label&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label class="checkbox-inline"&gt;
+                        &lt;input type="checkbox" name="optionsRadios" id="checkmale" value="Male" ng-model="formData.male" ng-true-value = "&#039;Male&#039;"&gt;
+                        Male
+                    &lt;/label&gt;
+                    &lt;label class="checkbox-inline"&gt;
+                        &lt;input type="checkbox" name="optionsRadios" id="checkfemale" value="Female" ng-model="formData.female" ng-true-value="&#039;Female&#039;"&gt;
+                        Female
+                    &lt;/label&gt;
+                    &lt;label class="checkbox-inline"&gt;
+                        &lt;input type="checkbox" name="optionsRadios" id="checkother" value="What&#039;s it to ya?" ng-model="formData.other" ng-true-value="&#039;What\&#039;s it to ya?&#039;"&gt;
+                        What&#039;s it to ya?
+                    &lt;/label&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="minage"&gt;Min. Age&lt;/label&gt;
+                    &lt;input type="number" class="form-control" id="minage" placeholder="5" ng-model="formData.minage"&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="maxage"&gt;Max Age&lt;/label&gt;
+                    &lt;input type="number" class="form-control" id="maxage" placeholder="80" ng-model="formData.maxage"&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;label for="favlang"&gt;Favorite Language&lt;/label&gt;
+                    &lt;input type="text" class="form-control" id="favlang" placeholder="Fortran" ng-model="formData.favlang"&gt;
+                &lt;/div&gt;
+                &lt;div class="form-group"&gt;
+                    &lt;div class="checkbox"&gt;
+                        &lt;label&gt;
+                            &lt;input type="checkbox" name="verified" id="radiomale" value="True" ng-model="formData.verified"&gt; &lt;strong&gt;Include Only HTML5 Verified Locations?&lt;/strong&gt;
+                        &lt;/label&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
 
-    // Retrieves JSON records for all users who meet a certain set of query conditions
-    app.post('/query/', function(req, res){
+                &lt;!-- Query button. Note that its tied to queryUsers() function from queryCtrl.  --&gt;
+                &lt;button type="submit" class="btn btn-danger btn-block" ng-click="queryUsers()"&gt;Search&lt;/button&gt;
+            &lt;/form&gt;
+        &lt;/div&gt;
 
-        // Grab all of the query parameters from the body.
-        var lat             = req.body.latitude;
-        var long            = req.body.longitude;
-        var distance        = req.body.distance;
-        var male            = req.body.male;
-        var female          = req.body.female;
-        var other           = req.body.other;
-        var minAge          = req.body.minAge;
-        var maxAge          = req.body.maxAge;
-        var favLang         = req.body.favlang;
-        var reqVerified     = req.body.reqVerified;
+        &lt;!-- Footer panel for displaying count. Note how it will only display if queryCount is greater than 0 --&gt;
+        &lt;div ng-show="queryCount&gt;0" class="panel-footer"&gt;
+            &lt;p class="text-center"&gt;Hot Dang! We Found {{queryCount}} Teammates.&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
 
-        // Opens a generic Mongoose Query. Depending on the post body we will...
-        var query = User.find({});
+Lastly, let's update our `meanMapApp` module in the `app.js` file to include the Angular `ngRoute` module and specify the `templateURL` associated with each URL route.  
 
-        // ...include filter by Max Distance (converting miles to meters)
-        if(distance){
+<pre><code class="language-javascript">
+// app.js
 
-            // Using MongoDB's geospatial querying features. (Note how coordinates are set [long, lat]
-            query = query.where('location').near({ center: {type: 'Point', coordinates: [long, lat]},
+// Declares the initial angular module "meanMapApp". Module grabs other controllers and services. Note the use of ngRoute.
+var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'ngRoute'])
 
-                // Converting meters to miles. Specifying spherical geometry (for globe)
-                maxDistance: distance * 1609.34, spherical: true});
+    // Configures Angular routing -- showing the relevant view and controller when needed.
+    .config(function($routeProvider){
 
-        }
-
-        // ...include filter by Gender (all options)
-        if(male || female || other){
-            query.or([{ 'gender': male }, { 'gender': female }, {'gender': other}]);
-        }
-
-        // ...include filter by Min Age
-        if(minAge){
-            query = query.where('age').gte(minAge);
-        }
-
-        // ...include filter by Max Age
-        if(maxAge){
-            query = query.where('age').lte(maxAge);
-        }
-
-        // ...include filter by Favorite Language
-        if(favLang){
-            query = query.where('favlang').equals(favLang);
-        }
-
-        // ...include filter for HTML5 Verified Locations
-        if(reqVerified){
-            query = query.where('htmlverified').equals("Yep (Thanks for giving us real data!)");
-        }
-
-        // Execute Query and Return the Query Results
-        query.exec(function(err, users){
-            if(err)
-                res.send(err);
-
-            // If no errors, respond with a JSON of all users that meet the criteria
-            res.json(users);
-        });
-    });
-
-## Creating the Query Controller
-
-Query Controller
-
-    // Creates the addCtrl Module and Controller. Note that it depends on 'geolocation' and 'gservice' modules.
-    var queryCtrl = angular.module('queryCtrl', ['geolocation', 'gservice']);
-    queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geolocation, gservice){
-    
-        // Initializes Variables
-        // ----------------------------------------------------------------------------
-        $scope.formData = {};
-        var queryBody = {};
-    
-        // Functions
-        // ----------------------------------------------------------------------------
-    
-        // Get User's actual coordinates based on HTML5 at window load
-        geolocation.getLocation().then(function(data){
-            coords = {lat:data.coords.latitude, long:data.coords.longitude};
-    
-            // Set the latitude and longitude equal to the HTML5 coordinates
-            $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
-            $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
-        });
-    
-        // Get coordinates based on mouse click. When a click event is detected....
-        $rootScope.$on("clicked", function(){
-    
-            // Run the gservice functions associated with identifying coordinates
-            $scope.$apply(function(){
-                $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
-                $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
-            });
-        });
-    
-        // Take query parameters and incorporate into a JSON queryBody
-        $scope.queryUsers = function(){
-    
-            // Assemble Query Body
-            queryBody = {
-                longitude: parseFloat($scope.formData.longitude),
-                latitude: parseFloat($scope.formData.latitude),
-                distance: parseFloat($scope.formData.distance),
-                male: $scope.formData.male,
-                female: $scope.formData.female,
-                other: $scope.formData.other,
-                minAge: $scope.formData.minage,
-                maxAge: $scope.formData.maxage,
-                favlang: $scope.formData.favlang,
-                reqVerified: $scope.formData.verified
-            };
-    
-            // Post the queryBody to the /query POST route to retrieve the filtered results
-            $http.post('/query', queryBody)
-    
-                // Store the filtered results in queryResults
-                .success(function(queryResults){
-    
-                    // Query Body and Result Logging
-                    console.log("QueryBody:");
-                    console.log(queryBody);
-                    console.log("QueryResults:");
-                    console.log(queryResults);
-   
-                    // Count the number of records retrieved for the panel-footer
-                    $scope.queryCount = queryResults.length;
-                })
-                .error(function(queryResults){
-                    console.log('Error ' + queryResults);
-                })
-        };
-    });
-
-Modified app.js
-
-    var app = angular.module('meanMapApp', ['addCtrl', 'queryCtrl', 'geolocation', 'gservice', 'ngRoute'])
-
-Modified Teammates control panel
+        // Join Team Control Panel
+        $routeProvider.when('/join', {
+            controller: 'addCtrl', 
+            templateUrl: 'partials/addForm.html',
 
             // Find Teammates Control Panel
         }).when('/find', {
-            controller: 'queryCtrl',
             templateUrl: 'partials/queryForm.html',
 
-Add queryCtrl.js to index.html
+            // All else forward to the Join Team Control Panel
+        }).otherwise({redirectTo:'/join'})
+    });
+</code></pre>
 
-    <script src="js/queryCtrl.js"></script>
+For those less familiar with Angular's `ngRoute` module, what we've done here is made use of Angular's `routeProvider` service to identify the URL our users are looking at in the browser. Thus, when a user is looking at a URL with a given suffix, Angular knows which pre-defined controller and templateURL to use. 
 
-Rerun the example we ran previously.
+As you can see, in the example above, when a user is looking at `/join` (or any URL other than `/find`), Angular will employ the `addCtrl` controller that we created in Part I and display the content from our `addForm.html` file. Similarly when a user is looking at `/find`, the user will be displayed `queryForm.html` content. (Once we create the `queryCtrl` controller, we will specify this here as well.)
+
+Now that we have our partials ready, let's update our `index.html` file.
+
+<pre><code class="language-markup">
+&lt;!-- index.html --&gt;
+
+&lt;!doctype html&gt;
+&lt;!-- Declares meanMapApp as the starting Angular module --&gt;
+&lt;html class="no-js" ng-app="meanMapApp"&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Scotch MEAN Map&lt;/title&gt;
+    &lt;meta name="description" content="An example demonstrating Google Map integration with MEAN Apps"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+    &lt;!-- CSS --&gt;
+    &lt;link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/&gt;
+    &lt;link rel="stylesheet" href="style.css"/&gt;
+
+    &lt;!-- Google Maps API --&gt;
+    &lt;script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDrn605l7RPadiwdzsOlRw9O28lxfYBJ6s"&gt;&lt;/script&gt;
+    &lt;!-- Modernizr --&gt;
+    &lt;script src="../bower_components/modernizr/bin/modernizr"&gt;&lt;/script&gt;
+    &lt;!-- JS Source --&gt;
+    &lt;script src="../bower_components/jquery/jquery.js"&gt;&lt;/script&gt;
+    &lt;script src="../bower_components/angular/angular.js"&gt;&lt;/script&gt;
+    &lt;script src="../bower_components/angular-route/angular-route.js"&gt;&lt;/script&gt;
+    &lt;script src="../bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"&gt;&lt;/script&gt;
+    &lt;!-- Angular Source --&gt;
+    &lt;script src="js/app.js"&gt;&lt;/script&gt;
+    &lt;script src="js/addCtrl.js"&gt;&lt;/script&gt;
+    &lt;script src="js/gservice.js"&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;!-- Removed ng-controller. Now this will be handled in app.js --&gt;
+&lt;body&gt;
+&lt;div class="container"&gt;
+    &lt;div class="header"&gt;
+        &lt;ul class="nav nav-pills pull-right"&gt;
+            &lt;!-- Links to the two menu views included --&gt;
+            &lt;li active&gt;&lt;a href="/#/join"&gt;Join the Team&lt;/a&gt;&lt;/li&gt;
+            &lt;li disabled&gt;&lt;a href="/#/find"&gt;Find Teammates&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;h3 class="text-muted"&gt;The Scotch MEAN MapApp&lt;/h3&gt;
+    &lt;/div&gt;
+    &lt;!-- Map and Side Panel --&gt;
+    &lt;div class="row content"&gt;
+        &lt;!-- Google Map --&gt;
+        &lt;div class="col-md-7"&gt;
+            &lt;div id="map"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;!-- Side Panel -- Now Handled by ng-view --&gt;
+        &lt;div ng-view&gt;&lt;/div&gt;
+
+    &lt;/div&gt;
+    &lt;hr/&gt;
+    &lt;!-- Footer --&gt;
+    &lt;div class="footer"&gt;
+        &lt;p class="text-center"&gt;&lt;span class="glyphicon glyphicon-check"&gt;&lt;/span&gt; Created by Ahmed Haque for Scotch IO -
+            &lt;a href="https://scotch.io/"&gt;App Tutorial&lt;/a&gt; | &lt;a href="https://github.com/afhaque/MeanMapAppV2.0"&gt;Github Repo&lt;/a&gt;&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+Here we've removed the content associated with our `addForm` side-panel and replaced it with a generic reference to `ng-view`. Angular's `routeProvider` will automatically replace this with the correct HTML partial. 
+
+Additionally, we've removed reference to the `addCtrl` controller that previously existed in our body tag. Once again, our `routeprovider` will instruct the page to use the correct controller based on the URL. 
+
+With that, its time for our first test! 
+
+Crank up your `mongod` instance and run `node server.js`. If you then head to `localhost:3000` you should see our familiar map from Part I. Click the 'Find Teammates' link to see our new Query Form basking in all its glory.
+
+![2-TeamMatePanel][2]
+
+## Creating the Query Logic and Express Routes
+
+Now its time to create the backend code for handling queries. Open your `routes.js` file and paste the following code beneath your `app.post('users')` code. 
+
+<pre><code class='language-javascript'>
+
+// app.post('users') code for creating users... 
+// ... 
+
+// Retrieves JSON records for all users who meet a certain set of query conditions
+app.post('/query/', function(req, res){
+
+    // Grab all of the query parameters from the body.
+    var lat             = req.body.latitude;
+    var long            = req.body.longitude;
+    var distance        = req.body.distance;
+
+    // Opens a generic Mongoose Query. Depending on the post body we will...
+    var query = User.find({});
+
+    // ...include filter by Max Distance (converting miles to meters)
+    if(distance){
+
+        // Using MongoDB's geospatial querying features. (Note how coordinates are set [long, lat]
+        query = query.where('location').near({ center: {type: 'Point', coordinates: [long, lat]},
+
+            // Converting meters to miles. Specifying spherical geometry (for globe)
+            maxDistance: distance * 1609.34, spherical: true});
+    }
+    
+    // ... Other queries will go here ... 
+
+    // Execute Query and Return the Query Results
+    query.exec(function(err, users){
+        if(err)
+            res.send(err);
+
+        // If no errors, respond with a JSON of all users that meet the criteria
+        res.json(users);
+    });
+});
+</code></pre>
+
+We've done a couple of key things here. So let's break it down:
+
+1. First, we created a new `POST` request handler for URLs with the suffix `/query`. This handler expects a JSON request body, which specifies three parameters: latitude, longitude, and distance. These parameters are then converted and stored as variables in the handler. 
+
+2. We then create a generic Mongoose Query using the Query Builder format. This format begins by establishing a generic `query` object equal to the unfiltered search of all users in our database. 
+
+3. If a distance is provided, the Query Builder will then add a new search condition that filters for all users that fall within the distance provided of the query's coordinates (latitude, longitude). Here we're using the MongoDB search parameter `$near` and its associated properties `maxDistance` and `spherical` to specify the range we're looking to cover. We're multiplying the distance of our query body by 1609.34, because we want to take our users' input (in miles) and convert it into the units MongoDB expects (in meters). Lastly, we're specifying that the distance should be determined assuming a spherical surface. This is important, because we'll be evaluating distances across the globe, as opposed to a flat Euclidean surface. 
+
+4. Finally, we use `query.exec` to instruct Mongoose to run the final query. If the query encounters no errors, it will provide a JSON output of all users who meet the criteria. 
+
+Let's go ahead and test what we have so far. To do this, re-run your application using `node server.js` and begin placing dummy markers on your map. Place two markers near each other on one side of the map and two markers a sizeable distance away. Then position your marker next to the first two markers and note the associated latitude and longitude. 
+
+![3-NearFarExample][3]
+
+Now, open up Postman and create a raw JSON `POST` request to your `/query` URL. Specify the latitude and longitude that you just noted and set a distance of 100. Then send the request. 
+
+![5-100MileDistanceBody][4]
+
+If all went well, your response body should list only the new nearby markers and exclude the distant ones. 
+
+![6-Results100MileDistance][5]
+
+Repeat your `POST` request, but set the distance much farther. This time try 1000 or 5000 instead. 
+
+![8-1000MileQuery][6]
+
+This time your response should list the remaining markers as well. 
+
+![9-1000MileResults][7]
+
+We'll examine the precision capabilities of our query a bit later, but for now, let's go ahead and add the remaining filter conditions.
+
+To do this, paste the following code over the POST request we just created. 
+
+<pre><code class='language-javascript'>
+// Retrieves JSON records for all users who meet a certain set of query conditions
+app.post('/query/', function(req, res){
+
+    // Grab all of the query parameters from the body.
+    var lat             = req.body.latitude;
+    var long            = req.body.longitude;
+    var distance        = req.body.distance;
+    var male            = req.body.male;
+    var female          = req.body.female;
+    var other           = req.body.other;
+    var minAge          = req.body.minAge;
+    var maxAge          = req.body.maxAge;
+    var favLang         = req.body.favlang;
+    var reqVerified     = req.body.reqVerified;
+
+    // Opens a generic Mongoose Query. Depending on the post body we will...
+    var query = User.find({});
+
+    // ...include filter by Max Distance (converting miles to meters)
+    if(distance){
+
+        // Using MongoDB's geospatial querying features. (Note how coordinates are set [long, lat]
+        query = query.where('location').near({ center: {type: 'Point', coordinates: [long, lat]},
+
+            // Converting meters to miles. Specifying spherical geometry (for globe)
+            maxDistance: distance * 1609.34, spherical: true});
+    }
+
+    // ...include filter by Gender (all options)
+    if(male || female || other){
+        query.or([{ 'gender': male }, { 'gender': female }, {'gender': other}]);
+    }
+
+    // ...include filter by Min Age
+    if(minAge){
+        query = query.where('age').gte(minAge);
+    }
+
+    // ...include filter by Max Age
+    if(maxAge){
+        query = query.where('age').lte(maxAge);
+    }
+
+    // ...include filter by Favorite Language
+    if(favLang){
+        query = query.where('favlang').equals(favLang);
+    }
+
+    // ...include filter for HTML5 Verified Locations
+    if(reqVerified){
+        query = query.where('htmlverified').equals("Yep (Thanks for giving us real data!)");
+    }
+
+    // Execute Query and Return the Query Results
+    query.exec(function(err, users){
+        if(err)
+            res.send(err);
+
+        // If no errors, respond with a JSON of all users that meet the criteria
+        res.json(users);
+    });
+});
+</code></pre>
+
+What we've done here is successively added conditions that check if our user has provided distance, gender, age, language, or HTML5 verified constraints to the `POST` body. If any of these constraints exist, we'll add the associated query condition to our Query Builder. Take note of this example as it really highlights the value of Mongoose's Query Builder for complex queries. 
+
+Speaking of complex queries. Let's go ahead and test one now. To do this, create a set of mock users in various locations with assorted characteristics.
+
+Here I've created a set of markers around Indianapolis.
+
+![10-AdvancedQueryInitialMap][8]
+
+Let's say, I'm creating a coding school that targets girls between the ages of 20-30 years of age, within the city limits (150 miles). I can convert these parameters into `POST` request fields as shown below.
+
+![11-AdvancedQueryBody][9]
+
+Then when I run the query, I see a successfully filtered set of results.
+
+![12-AdvancedQueryResults][10]
+
+Huzzah! IndyCodingSchool here we come.
+
+## Creating the Query Controller
+
+Okay. That was great, but writing JSON requests manually seriously sucks. We need to build our UI capabilities ASAP! 
+
+To do this, let's paste the following code in our `queryCtrl.js` file.
+
+<pre><code class="language-javascript">
+// Creates the addCtrl Module and Controller. Note that it depends on 'geolocation' and 'gservice' modules.
+var queryCtrl = angular.module('queryCtrl', ['geolocation', 'gservice']);
+queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geolocation, gservice){
+
+    // Initializes Variables
+    // ----------------------------------------------------------------------------
+    $scope.formData = {};
+    var queryBody = {};
+
+    // Functions
+    // ----------------------------------------------------------------------------
+
+    // Get User's actual coordinates based on HTML5 at window load
+    geolocation.getLocation().then(function(data){
+        coords = {lat:data.coords.latitude, long:data.coords.longitude};
+
+        // Set the latitude and longitude equal to the HTML5 coordinates
+        $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
+        $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
+    });
+
+    // Get coordinates based on mouse click. When a click event is detected....
+    $rootScope.$on("clicked", function(){
+
+        // Run the gservice functions associated with identifying coordinates
+        $scope.$apply(function(){
+            $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
+            $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
+        });
+    });
+
+    // Take query parameters and incorporate into a JSON queryBody
+    $scope.queryUsers = function(){
+
+        // Assemble Query Body
+        queryBody = {
+            longitude: parseFloat($scope.formData.longitude),
+            latitude: parseFloat($scope.formData.latitude),
+            distance: parseFloat($scope.formData.distance),
+            male: $scope.formData.male,
+            female: $scope.formData.female,
+            other: $scope.formData.other,
+            minAge: $scope.formData.minage,
+            maxAge: $scope.formData.maxage,
+            favlang: $scope.formData.favlang,
+            reqVerified: $scope.formData.verified
+        };
+
+        // Post the queryBody to the /query POST route to retrieve the filtered results
+        $http.post('/query', queryBody)
+
+            // Store the filtered results in queryResults
+            .success(function(queryResults){
+
+                // Query Body and Result Logging
+                console.log("QueryBody:");
+                console.log(queryBody);
+                console.log("QueryResults:");
+                console.log(queryResults);
+
+                // Count the number of records retrieved for the panel-footer
+                $scope.queryCount = queryResults.length;
+            })
+            .error(function(queryResults){
+                console.log('Error ' + queryResults);
+            })
+    };
+});
+</code></pre>
+
+What we've done here is very similar to the work we did in Part I. We created a new module and controller called `queryCtrl`. This controller relies on `$scope` to pull all of the form data from our active `queryForm.html` file. These elements are converted into variables, which are then used to directly create an http `POST` request to the `/query` URL whenever the `$scope.queryUsers` function is triggered. Additionally, as was the case with our `addCtrl` controller, the `queryCtrl` has code for identifying a user's current location and for handling click capture.
+
+Now that our controller is ready, let's add a reference to `queryCtrl` in our main Angular module in `app.js`.
+
+<pre><code class="language-javascript">
+var app = angular.module('meanMapApp', ['addCtrl', 'queryCtrl', 'geolocation', 'gservice', 'ngRoute'])
+</code></pre>
+
+We'll also update our `$routeProvider` to utilize this new controller when a user is looking at the `/find` URL.
+
+<pre><code class="language-javascript">
+    // Find Teammates Control Panel
+}).when('/find', {
+    controller: 'queryCtrl',
+    templateUrl: 'partials/queryForm.html',
+</code></pre>
+
+Finally, we'll include a link to the `queryCtrl.js` script in our `index.html` file.
+
+<pre><code class="language-markup">
+&lt;script src="js/queryCtrl.js"&gt;&lt;/script&gt;    
+</code></pre>
+
+Now that we've completed everything, let's repeat the example from before. But this time, use the form itself to conduct the search.
+
+Since we haven't updated our map service, we won't yet see changes on the map just yet. However, if we open up our Google Developers Console (`ctrl+shift+i`) and navigate to the console, we should see both our `queryBody` and the `queryResults` displayed.  
+
+![13-QueryResultsConsole][11]
+
+If all went well, the query results should match the results you saw earlier.
+
+![14-QueryResults][12]
+
+Aha. Found them again!
 
 ## Modifying the Google Maps Service
 
 Gservice Refresh Function with optional filtered results parameter
 
-        // Refresh the Map with new data. Takes three parameters (lat, long, and filtering results)
-        googleMapService.refresh = function(latitude, longitude, filteredResults){
+<pre><code class="language-javascript">
+// Refresh the Map with new data. Takes three parameters (lat, long, and filtering results)
+googleMapService.refresh = function(latitude, longitude, filteredResults){
 
-            // Clears the holding array of locations
-            locations = [];
+    // Clears the holding array of locations
+    locations = [];
 
-            // Set the selected lat and long equal to the ones provided on the refresh() call
-            selectedLat = latitude;
-            selectedLong = longitude;
+    // Set the selected lat and long equal to the ones provided on the refresh() call
+    selectedLat = latitude;
+    selectedLong = longitude;
 
-            // If filtered results are provided in the refresh() call...
-            if (filteredResults){
+    // If filtered results are provided in the refresh() call...
+    if (filteredResults){
 
-                // Then convert the filtered results into map points.
-                locations = convertToMapPoints(filteredResults);
+        // Then convert the filtered results into map points.
+        locations = convertToMapPoints(filteredResults);
 
-                // Then, initialize the map -- noting that a filter was used (to mark icons yellow)
-                initialize(latitude, longitude, true);
-            }
+        // Then, initialize the map -- noting that a filter was used (to mark icons yellow)
+        initialize(latitude, longitude, true);
+    }
 
-            // If no filter is provided in the refresh() call...
-            else {
+    // If no filter is provided in the refresh() call...
+    else {
 
-                // Perform an AJAX call to get all of the records in the db.
-                $http.get('/users').success(function(response){
+        // Perform an AJAX call to get all of the records in the db.
+        $http.get('/users').success(function(response){
 
-                    // Then convert the results into map points
-                    locations = convertToMapPoints(response);
+            // Then convert the results into map points
+            locations = convertToMapPoints(response);
 
-                    // Then initialize the map -- noting that no filter was used.
-                    initialize(latitude, longitude, false);
-                }).error(function(){});
-            }
-        };
+            // Then initialize the map -- noting that no filter was used.
+            initialize(latitude, longitude, false);
+        }).error(function(){});
+    }
+};
+</code></pre>
 
 Gservice Initialization Function modified to handle filtering
 
-        // Initializes the map
-        var initialize = function(latitude, longitude, filter) {
+<pre><code class="language-javascript">
+// Initializes the map
+var initialize = function(latitude, longitude, filter) {
 
-            // Uses the selected lat, long as starting point
-            var myLatLng = {lat: selectedLat, lng: selectedLong};
+    // Uses the selected lat, long as starting point
+    var myLatLng = {lat: selectedLat, lng: selectedLong};
 
-            // If map has not been created...
-            if (!map){
+    // If map has not been created...
+    if (!map){
 
-                // Create a new map and place in the index.html page
-                var map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 3,
-                    center: myLatLng
-                });
-            }
+        // Create a new map and place in the index.html page
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 3,
+            center: myLatLng
+        });
+    }
 
-            // If a filter was used set the icons yellow, otherwise blue
-            if(filter){
-                icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
-            }
-            else{
-                icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
-            }
+    // If a filter was used set the icons yellow, otherwise blue
+    if(filter){
+        icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+    }
+    else{
+        icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+    }
 
-            // Loop through each location in the array and place a marker
-            locations.forEach(function(n, i){
-                var marker = new google.maps.Marker({
-                    position: n.latlon,
-                    map: map,
-                    title: "Big Map",
-                    icon: icon,
-                });
+    // Loop through each location in the array and place a marker
+    locations.forEach(function(n, i){
+        var marker = new google.maps.Marker({
+            position: n.latlon,
+            map: map,
+            title: "Big Map",
+            icon: icon,
+        });
 
-                // For each marker created, add a listener that checks for clicks
-                google.maps.event.addListener(marker, 'click', function(e){
+        // For each marker created, add a listener that checks for clicks
+        google.maps.event.addListener(marker, 'click', function(e){
 
-                    // When clicked, open the selected marker's message
-                    currentSelectedMarker = n;
-                    n.message.open(map, marker);
-                });
-            });
+            // When clicked, open the selected marker's message
+            currentSelectedMarker = n;
+            n.message.open(map, marker);
+        });
+    });
 
-            // Set initial location as a bouncing red marker
-            var initialLocation = new google.maps.LatLng(latitude, longitude);
-            var marker = new google.maps.Marker({
-                position: initialLocation,
-                animation: google.maps.Animation.BOUNCE,
-                map: map,
-                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-            });
-            lastMarker = marker;
+    // Set initial location as a bouncing red marker
+    var initialLocation = new google.maps.LatLng(latitude, longitude);
+    var marker = new google.maps.Marker({
+        position: initialLocation,
+        animation: google.maps.Animation.BOUNCE,
+        map: map,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    });
+    lastMarker = marker;
 
-            // Function for moving to a selected location
-            map.panTo(new google.maps.LatLng(latitude, longitude));
+    // Function for moving to a selected location
+    map.panTo(new google.maps.LatLng(latitude, longitude));
 
-            // Clicking on the Map moves the bouncing red marker
-            google.maps.event.addListener(map, 'click', function(e){
-                var marker = new google.maps.Marker({
-                    position: e.latLng,
-                    animation: google.maps.Animation.BOUNCE,
-                    map: map,
-                    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-                });
+    // Clicking on the Map moves the bouncing red marker
+    google.maps.event.addListener(map, 'click', function(e){
+        var marker = new google.maps.Marker({
+            position: e.latLng,
+            animation: google.maps.Animation.BOUNCE,
+            map: map,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
 
-                // When a new spot is selected, delete the old red bouncing marker
-                if(lastMarker){
-                    lastMarker.setMap(null);
-                }
+        // When a new spot is selected, delete the old red bouncing marker
+        if(lastMarker){
+            lastMarker.setMap(null);
+        }
 
-                // Create a new red bouncing marker and move to it
-                lastMarker = marker;
-                map.panTo(marker.position);
+        // Create a new red bouncing marker and move to it
+        lastMarker = marker;
+        map.panTo(marker.position);
 
-                // Update Broadcasted Variable (lets the panels know to change their lat, long values)
-                googleMapService.clickLat = marker.getPosition().lat();
-                googleMapService.clickLong = marker.getPosition().lng();
-                $rootScope.$broadcast("clicked");
-            });
-        };
+        // Update Broadcasted Variable (lets the panels know to change their lat, long values)
+        googleMapService.clickLat = marker.getPosition().lat();
+        googleMapService.clickLong = marker.getPosition().lng();
+        $rootScope.$broadcast("clicked");
+    });
+};
+</code></pre>
 
 Modifying the queryCtrl to refresh google maps
 
-        // Pass the filtered results to the Google Map Service and refresh the map
-        gservice.refresh(queryBody.latitude, queryBody.longitude, queryResults);
+<pre><code class="language-javascript">
+// Pass the filtered results to the Google Map Service and refresh the map
+gservice.refresh(queryBody.latitude, queryBody.longitude, queryResults);
+</code></pre>
+
+![15-FinalQuery][13]
 
 ## Final Tweaks
 
 There are plenty of ways to improve this app. Including bounding boxes for the entire maps, using GEOJson, setting permanent max zooms, or styling the Google Map using a pre-made style.
+
+![16-FinalHTML5Verified][14]
+
+## BONUS: "But just how accurate is this Mongo $near thing...?"
+
+So. This is cool. So I wanted to test the accuracy. There's significant discussions online about creating "accurate" calculations of distance. Things get pretty mathematical. And I hate math. So, let's see how accurate this is. I placed XX markers on 5 different spots on the map (known distances away from the map).
+
+Spaced out 1, 5, 10, 20, 30 miles away from a central spot. Let's query. for all records 5 miles away. I've done a good bit of testing of this.
+
+Now let's try this on long-distances. Because dealing with the curvature of the earth is tricky. I put a spot XXX miles away. Let's run the query again. I ended up getting results only at XXX miles.
+
+All in all these are things worth noting. If you need greater accuracy than ~5 miles with proximate searches. Or nearer than 20 miles from a distance... Look into other options.
+
+[15]: Map with 5 locations: 1, 5, 10, 15, 25 miles away.
+
+ [1]: https://scotch.io/wp-content/uploads/2015/10/1-MapCurrent.png
+ [2]: https://scotch.io/wp-content/uploads/2015/10/2-TeamMatePanel.png
+ [3]: https://scotch.io/wp-content/uploads/2015/10/3-NearFarExample.png
+ [4]: https://scotch.io/wp-content/uploads/2015/10/5-100MileDistanceBody.png
+ [5]: https://scotch.io/wp-content/uploads/2015/10/6-Results100MileDistance.png
+ [6]: https://scotch.io/wp-content/uploads/2015/10/8-1000MileQuery.png
+ [7]: https://scotch.io/wp-content/uploads/2015/10/9-1000MileResults.png
+ [8]: https://scotch.io/wp-content/uploads/2015/10/10-AdvancedQueryInitialMap.png
+ [9]: https://scotch.io/wp-content/uploads/2015/10/11-AdvancedQueryBody.png
+ [10]: https://scotch.io/wp-content/uploads/2015/10/12-AdvancedQueryResults.png
+ [11]: https://scotch.io/wp-content/uploads/2015/10/13-QueryResultsConsole.png
+ [12]: https://scotch.io/wp-content/uploads/2015/10/14-QueryResults.png
+ [13]: https://scotch.io/wp-content/uploads/2015/10/15-FinalQuery.png
+ [14]: https://scotch.io/wp-content/uploads/2015/10/16-FinalHTML5Verified.png
