@@ -1,20 +1,20 @@
 ## Introduction
 
-Welcome back! 
+Welcome back!
 
-Last time, we created an application that integrated Google Maps directly into MEAN stack code. The app provided us a panel to create users, tag their location based on latitude and longitude, and validate their whereabouts using HTML5 geolocation.
+[Last time][1], we created an application that integrated Google Maps directly into MEAN stack code. The app provided us a panel to create users, tag their location based on latitude and longitude, and validate their whereabouts using HTML5 geolocation.
 
-As of this writing, over 150 users have added themselves to our map, with diverse locations strewn from San Francisco to Melbourne -- which is already pretty cool when you think about it!
+As of this writing, over 150 users have added themselves to our [demo map][2], with diverse locations strewn from San Francisco to Melbourne -- which is already pretty cool when you think about it!
 
-![1-MapCurrent][1]
+![1-MapCurrent][3]
 
 Today, we'll be taking our work a step further by adding a new control panel that allows us to filter users based on a variety of fields. The final product will allow us to query our map based on gender, age, favorite language, proximity, and whether a user's location has been HTML5 verified. Additionally, this tutorial will also give us a nice opportunity to discuss some of MongoDB's geospatial query tools.
 
-As you follow along, feel encouraged to grab the source code. Also, if you're joining us for the first time, you can download the code from Part I using this link.
+As you follow along, feel encouraged to grab the [source code][4]. Also, if you're joining us for the first time, you can download the code from [Part I using this link][5].
 
 ## Revised App Skeleton
 
-To begin, let's make some adjustments to our app's structure. Go ahead and create a new `queryCtrl.js` file as well as a directory called `partials`, which will hold the files `addForm.html` and `queryForm.html`. 
+To begin, let's make some adjustments to our app's structure. Go ahead and create a new `queryCtrl.js` file as well as a directory called `partials`, which will hold the files `addForm.html` and `queryForm.html`.
 
 <pre><code class="language-bash">
 MapApp
@@ -40,11 +40,11 @@ MapApp
 
 ## Creating the Query View
 
-Since our app wil now have two separate control panels -- one for adding users and one for querying users, we're going to utilize Angular's routing module `ngRoute` to display the correct panel when needed. 
+Since our app wil now have two separate control panels -- one for adding users and one for querying users, we're going to utilize Angular's routing module [ngRoute][6] to display the correct panel when needed.
 
-To do this, we're going to store the code associated with each panel in its own HTML partial. We'll then specify in our main Angular module (`app.js`) that our application should display the `queryForm` partial when the URL includes `/find` and the `addForm` partial for all other URLs. 
+To do this, we're going to store the code associated with each panel in its own HTML partial. We'll then specify in our main Angular module (`app.js`) that our application should display the `queryForm` partial when the URL includes `/find` and the `addForm` partial for all other URLs.
 
-Let's go ahead and extract the 'Add Form' code that previously found in our `index.html` file and paste it into the `addForm.html` file of our `partials` folder. 
+Let's go ahead and extract the 'Add Form' code that previously found in our `index.html` file and paste it into the `addForm.html` file of our `partials` folder.
 
 <pre><code class="language-markup">
 &lt;!-- addForm.html --&gt;
@@ -121,7 +121,6 @@ Let's go ahead and extract the 'Add Form' code that previously found in our `ind
 </code></pre>
 
 Next, let's paste the code associated with our new Query Form into the `queryForm.html` of the same `partials` folder.
-
 
 <pre><code class="language-markup">
 &lt;!-- queryForm.html --&gt;
@@ -206,7 +205,7 @@ Next, let's paste the code associated with our new Query Form into the `queryFor
 &lt;/div&gt;
 </code></pre>
 
-Lastly, let's update our `meanMapApp` module in the `app.js` file to include the Angular `ngRoute` module and specify the `templateURL` associated with each URL route.  
+Lastly, let's update our `meanMapApp` module in the `app.js` file to include the Angular `ngRoute` module and specify the `templateURL` associated with each URL route.
 
 <pre><code class="language-javascript">
 // app.js
@@ -231,7 +230,7 @@ var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'n
     });
 </code></pre>
 
-For those less familiar with Angular's `ngRoute` module, what we've done here is made use of Angular's `routeProvider` service to identify the URL our users are looking at in the browser. Thus, when a user is looking at a URL with a given suffix, Angular knows which pre-defined controller and templateURL to use. 
+For those less familiar with Angular's `ngRoute` module, what we've done here is made use of Angular's `routeProvider` service to identify the URL our users are looking at in the browser. Thus, when a user is looking at a URL with a given suffix, Angular knows which pre-defined controller and templateURL to use.
 
 As you can see, in the example above, when a user is looking at `/join` (or any URL other than `/find`), Angular will employ the `addCtrl` controller that we created in Part I and display the content from our `addForm.html` file. Similarly when a user is looking at `/find`, the user will be displayed `queryForm.html` content. (Once we create the `queryCtrl` controller, we will specify this here as well.)
 
@@ -299,21 +298,22 @@ Now that we have our partials ready, let's update our `index.html` file.
 &lt;/html&gt;
 </code></pre>
 
-Here we've removed the content associated with our `addForm` side-panel and replaced it with a generic reference to `ng-view`. Angular's `routeProvider` will automatically replace this with the correct HTML partial. 
+Here we've removed the content associated with our `addForm` side-panel and replaced it with a generic reference to `ng-view`. Angular's `routeProvider` will automatically replace this with the correct HTML partial.
 
-Additionally, we've removed reference to the `addCtrl` controller that previously existed in our body tag. Once again, our `routeprovider` will instruct the page to use the correct controller based on the URL. 
+Additionally, we've removed reference to the `addCtrl` controller that previously existed in our body tag. Once again, our `routeprovider` will instruct the page to use the correct controller based on the URL.
 
-With that, its time for our first test! 
+With that, its time for our first test!
 
 Crank up your `mongod` instance and run `node server.js`. If you then head to `localhost:3000` you should see our familiar map from Part I. Click the 'Find Teammates' link to see our new Query Form basking in all its glory.
 
-![2-TeamMatePanel][2]
+![2-TeamMatePanel][7]
 
 ## Creating the Query Logic and Express Routes
 
-Now its time to create the backend code for handling queries. Open your `routes.js` file and paste the following code beneath your `app.post('users')` code. 
+Now its time to create the backend code for handling queries. Open your `routes.js` file and paste the following code beneath your `app.post('users')` code.
 
 <pre><code class='language-javascript'>
+// routes.js
 
 // app.post('users') code for creating users... 
 // ... 
@@ -354,39 +354,41 @@ app.post('/query/', function(req, res){
 
 We've done a couple of key things here. So let's break it down:
 
-1. First, we created a new `POST` request handler for URLs with the suffix `/query`. This handler expects a JSON request body, which specifies three parameters: latitude, longitude, and distance. These parameters are then converted and stored as variables in the handler. 
+1.  First, we created a new `POST` request handler for URLs with the suffix `/query`. This handler expects a JSON request body, which specifies three parameters: latitude, longitude, and distance. These parameters are then converted and stored as variables in the handler.
 
-2. We then create a generic Mongoose Query using the Query Builder format. This format begins by establishing a generic `query` object equal to the unfiltered search of all users in our database. 
+2.  We then create a generic Mongoose Query using the [Query Builder][8] format. This format begins by establishing a generic `query` object equal to the unfiltered search of all users in our database.
 
-3. If a distance is provided, the Query Builder will then add a new search condition that filters for all users that fall within the distance provided of the query's coordinates (latitude, longitude). Here we're using the MongoDB search parameter `$near` and its associated properties `maxDistance` and `spherical` to specify the range we're looking to cover. We're multiplying the distance of our query body by 1609.34, because we want to take our users' input (in miles) and convert it into the units MongoDB expects (in meters). Lastly, we're specifying that the distance should be determined assuming a spherical surface. This is important, because we'll be evaluating distances across the globe, as opposed to a flat Euclidean surface. 
+3.  If a distance is provided, the Query Builder will then add a new search condition that filters for all users that fall within the distance provided of the query's coordinates (latitude, longitude). Here we're using the MongoDB search parameter [$near][9] and its associated properties `maxDistance` and `spherical` to specify the range we're looking to cover. We're multiplying the distance of our query body by 1609.34, because we want to take our users' input (in miles) and convert it into the units MongoDB expects (in meters). Lastly, we're specifying that the distance should be determined assuming a spherical surface. This is important, because we'll be evaluating distances across the globe, as opposed to a flat Euclidean surface.
 
-4. Finally, we use `query.exec` to instruct Mongoose to run the final query. If the query encounters no errors, it will provide a JSON output of all users who meet the criteria. 
+4.  Finally, we use `query.exec` to instruct Mongoose to run the final query. If the query encounters no errors, it will provide a JSON output of all users who meet the criteria.
 
-Let's go ahead and test what we have so far. To do this, re-run your application using `node server.js` and begin placing dummy markers on your map. Place two markers near each other on one side of the map and two markers a sizeable distance away. Then position your marker next to the first two markers and note the associated latitude and longitude. 
+Let's go ahead and test what we have so far. To do this, re-run your application using `node server.js` and begin placing dummy markers on your map. Place two markers near each other on one side of the map and two markers a sizeable distance away. Then position your marker next to the first two markers and note the associated latitude and longitude.
 
-![3-NearFarExample][3]
+![3-NearFarExample][10]
 
-Now, open up Postman and create a raw JSON `POST` request to your `/query` URL. Specify the latitude and longitude that you just noted and set a distance of 100. Then send the request. 
+Now, open up [Postman][11] and create a raw JSON `POST` request to your `/query` URL. Specify the latitude and longitude that you just noted and set a distance of 100. Then send the request.
 
-![5-100MileDistanceBody][4]
+![5-100MileDistanceBody][12]
 
-If all went well, your response body should list only the new nearby markers and exclude the distant ones. 
+If all went well, your response body should list only the new nearby markers and exclude the distant ones.
 
-![6-Results100MileDistance][5]
+![6-Results100MileDistance][13]
 
-Repeat your `POST` request, but set the distance much farther. This time try 1000 or 5000 instead. 
+Repeat your `POST` request, but set the distance much farther. Try 1000 or 5000 instead.
 
-![8-1000MileQuery][6]
+![8-1000MileQuery][14]
 
-This time your response should list the remaining markers as well. 
+If all went well, your response should list the remaining markers as well.
 
-![9-1000MileResults][7]
+![9-1000MileResults][15]
 
 We'll examine the precision capabilities of our query a bit later, but for now, let's go ahead and add the remaining filter conditions.
 
-To do this, paste the following code over the POST request we just created. 
+To do this, paste the following code over the POST request we just created.
 
 <pre><code class='language-javascript'>
+// routes.js
+
 // Retrieves JSON records for all users who meet a certain set of query conditions
 app.post('/query/', function(req, res){
 
@@ -451,31 +453,33 @@ app.post('/query/', function(req, res){
 });
 </code></pre>
 
-What we've done here is successively added conditions that check if our user has provided distance, gender, age, language, or HTML5 verified constraints to the `POST` body. If any of these constraints exist, we'll add the associated query condition to our Query Builder. Take note of this example as it really highlights the value of Mongoose's Query Builder for complex queries. 
+What we've done here is successively added conditions that check if our user has provided distance, gender, age, language, or HTML5 verified constraints to the `POST` body. If any of these constraints exist, we'll add the associated query condition to our Query Builder. Take note of this example as it really highlights the value of Mongoose's Query Builder for complex queries.
 
 Speaking of complex queries. Let's go ahead and test one now. To do this, create a set of mock users in various locations with assorted characteristics.
 
 Here I've created a set of markers around Indianapolis.
 
-![10-AdvancedQueryInitialMap][8]
+![10-AdvancedQueryInitialMap][16]
 
 Let's say, I'm creating a coding school that targets girls between the ages of 20-30 years of age, within the city limits (150 miles). I can convert these parameters into `POST` request fields as shown below.
 
-![11-AdvancedQueryBody][9]
+![11-AdvancedQueryBody][17]
 
 Then when I run the query, I see a successfully filtered set of results.
 
-![12-AdvancedQueryResults][10]
+![12-AdvancedQueryResults][18]
 
 Huzzah! IndyCodingSchool here we come.
 
 ## Creating the Query Controller
 
-Okay. That was great, but writing JSON requests manually seriously sucks. We need to build our UI capabilities ASAP! 
+Okay. That was great, but writing JSON requests manually seriously sucks. We need to build our UI capabilities ASAP!
 
 To do this, let's paste the following code in our `queryCtrl.js` file.
 
 <pre><code class="language-javascript">
+// queryCtrl.js
+
 // Creates the addCtrl Module and Controller. Note that it depends on 'geolocation' and 'gservice' modules.
 var queryCtrl = angular.module('queryCtrl', ['geolocation', 'gservice']);
 queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geolocation, gservice){
@@ -551,12 +555,16 @@ What we've done here is very similar to the work we did in Part I. We created a 
 Now that our controller is ready, let's add a reference to `queryCtrl` in our main Angular module in `app.js`.
 
 <pre><code class="language-javascript">
+// app.js
+
 var app = angular.module('meanMapApp', ['addCtrl', 'queryCtrl', 'geolocation', 'gservice', 'ngRoute'])
 </code></pre>
 
 We'll also update our `$routeProvider` to utilize this new controller when a user is looking at the `/find` URL.
 
 <pre><code class="language-javascript">
+// app.js
+
     // Find Teammates Control Panel
 }).when('/find', {
     controller: 'queryCtrl',
@@ -571,21 +579,25 @@ Finally, we'll include a link to the `queryCtrl.js` script in our `index.html` f
 
 Now that we've completed everything, let's repeat the example from before. But this time, use the form itself to conduct the search.
 
-Since we haven't updated our map service, we won't yet see changes on the map just yet. However, if we open up our Google Developers Console (`ctrl+shift+i`) and navigate to the console, we should see both our `queryBody` and the `queryResults` displayed.  
+Since we haven't updated our map service, we won't yet see changes on the map just yet. However, if we open up our Google Developers Console (`ctrl+shift+i`) and navigate to the console, we should see both our `queryBody` and the `queryResults` displayed.
 
-![13-QueryResultsConsole][11]
+![13-QueryResultsConsole][19]
 
 If all went well, the query results should match the results you saw earlier.
 
-![14-QueryResults][12]
+![14-QueryResults][20]
 
 Aha. Found them again!
 
 ## Modifying the Google Maps Service
 
-Gservice Refresh Function with optional filtered results parameter
+Now that we're successfully filtering users, its time to visualize our results on the map itself. To do this, we're going to make a series of modifications to our googleMapService found in `gservice.js`.
+
+Go ahead and paste the following code over our pre-existing refresh `googleMapService.refresh` function.
 
 <pre><code class="language-javascript">
+// gservice.js
+
 // Refresh the Map with new data. Takes three parameters (lat, long, and filtering results)
 googleMapService.refresh = function(latitude, longitude, filteredResults){
 
@@ -622,9 +634,19 @@ googleMapService.refresh = function(latitude, longitude, filteredResults){
 };
 </code></pre>
 
-Gservice Initialization Function modified to handle filtering
+Here what we've done is introduced a new optional parameter `filteredResults` to the function.
+
+As you may recall, from Part I, the original purpose of the `refresh` function was to pull information on all the users in our database through a `GET` request to `/users` and to convert this data into Google Map markers. These markers were then used to populate our map, which was then displayed to users with their own location marked as well.
+
+By adding in the `filteredResults` parameter, we're adapting the `refresh` function for a second purpose. In cases, where we want to show only filtered results, we're going to send the `refresh` function a JSON that includes only the filter-limited results. We'll be able to generate these results using the `POST` request to the `/query` route that we just created.
+
+Once the `refresh` function receives these filtered results, it will pass the JSON to our `convertToMapPoints` function and store the converted set of Google Map markers in our `locations` array. We can then initialize our map as before and only the filtered results will be shown.
+
+Next, let's make one more change to make things more obvious. Go ahead and paste the below code over the `initialize` function.
 
 <pre><code class="language-javascript">
+// gservice.js
+
 // Initializes the map
 var initialize = function(latitude, longitude, filter) {
 
@@ -706,44 +728,78 @@ var initialize = function(latitude, longitude, filter) {
 };
 </code></pre>
 
-Modifying the queryCtrl to refresh google maps
+The change here is minimal but visually significant. Here we've noted that if the `initialize` function is called with the boolean `filter` set to true, all markers should be yellow dots as opposed to the blue dots we'd been using before. This is helpful from a UI perspective, because it let's users immediately realize that their query worked successfully.
+
+Now that our `refresh` function has been updated. Let's finally update our `queryCtrl` file to utilize this new service. Add the below line in place of the `console.log` lines we used earlier.
 
 <pre><code class="language-javascript">
+// queryCtrl.js
+
+// Old console.log code ... 
+
 // Pass the filtered results to the Google Map Service and refresh the map
 gservice.refresh(queryBody.latitude, queryBody.longitude, queryResults);
 </code></pre>
 
-![15-FinalQuery][13]
+Here you can see that we're taking the queryResults from our `/query` `POST` and directly sending the filtered results to our `refresh` function for map building. And with this final step, let's run one final test of our app!
+
+Boot up your `server.js` file and rerun the advanced query example we've run before using the Query Form. If all went well you should see prominent yellow markers, indicating the filtered results.
+
+![15-FinalQuery][21]
+
+Victory. I see you!
 
 ## Final Tweaks
 
-There are plenty of ways to improve this app. Including bounding boxes for the entire maps, using GEOJson, setting permanent max zooms, or styling the Google Map using a pre-made style.
+There are plenty of ways to improve this app. As a few suggestions, I'd suggest reading up on [GeoJSON][22], the various [Google Map Options][23], and the different styling options available from [Snazzy Maps][24]. Additionally, there is significant momentum behind the [Angular-Google-Maps Project][25], something definitely worth looking into if you're planning to build more complex map applications.
 
-![16-FinalHTML5Verified][14]
+That said, even with as simple a map application as this one -- it's remarkable how quickly you can draw meaningful information. Already our demo app has had close to 100 verified users sign up. Scanning through the locations, it's been awesome to see the diversity of locations that Scotch readers login from. (Who knew Scotch had a follower in Bishkek, Kyrgzstan?).
+
+![16-FinalHTML5Verified][26]
 
 ## BONUS: "But just how accurate is this Mongo $near thing...?"
 
-So. This is cool. So I wanted to test the accuracy. There's significant discussions online about creating "accurate" calculations of distance. Things get pretty mathematical. And I hate math. So, let's see how accurate this is. I placed XX markers on 5 different spots on the map (known distances away from the map).
+Well. It turns out *pretty* damn accurate is the answer. While writing this tutorial, I'd stumbled into a few articles that anecdotally estimated that the `$near` function was good enough at discriminating distances within 5 miles -- so I decided to test and see for myself. I ran a few experiments with coordinates a known distance away from each other, and looked for the minimum distance I could use to discriminate locations. 
 
-Spaced out 1, 5, 10, 20, 30 miles away from a central spot. Let's query. for all records 5 miles away. I've done a good bit of testing of this.
+For small distances (where Euclidean "flat" geometry takes hold), Mongo distance queries were right on the money -- consistently able to discriminate distances within 1 mile of the actual distance. 
 
-Now let's try this on long-distances. Because dealing with the curvature of the earth is tricky. I put a spot XXX miles away. Let's run the query again. I ended up getting results only at XXX miles.
+![17-LocalDistances][27]
 
-All in all these are things worth noting. If you need greater accuracy than ~5 miles with proximate searches. Or nearer than 20 miles from a distance... Look into other options.
+For larger distances (where more complex "spherical" geometries become relevant), the MongoDB distance queries were off by about ~10 miles. Not as good, but not shabby at all -- especially, considering there exist multiple methods for calculating spherical distances. .
 
-[15]: Map with 5 locations: 1, 5, 10, 15, 25 miles away.
+![18-GlobalDistances][28]
 
- [1]: https://scotch.io/wp-content/uploads/2015/10/1-MapCurrent.png
- [2]: https://scotch.io/wp-content/uploads/2015/10/2-TeamMatePanel.png
- [3]: https://scotch.io/wp-content/uploads/2015/10/3-NearFarExample.png
- [4]: https://scotch.io/wp-content/uploads/2015/10/5-100MileDistanceBody.png
- [5]: https://scotch.io/wp-content/uploads/2015/10/6-Results100MileDistance.png
- [6]: https://scotch.io/wp-content/uploads/2015/10/8-1000MileQuery.png
- [7]: https://scotch.io/wp-content/uploads/2015/10/9-1000MileResults.png
- [8]: https://scotch.io/wp-content/uploads/2015/10/10-AdvancedQueryInitialMap.png
- [9]: https://scotch.io/wp-content/uploads/2015/10/11-AdvancedQueryBody.png
- [10]: https://scotch.io/wp-content/uploads/2015/10/12-AdvancedQueryResults.png
- [11]: https://scotch.io/wp-content/uploads/2015/10/13-QueryResultsConsole.png
- [12]: https://scotch.io/wp-content/uploads/2015/10/14-QueryResults.png
- [13]: https://scotch.io/wp-content/uploads/2015/10/15-FinalQuery.png
- [14]: https://scotch.io/wp-content/uploads/2015/10/16-FinalHTML5Verified.png
+All in all, this presents even more reason to play around with the Geospatial tools in MongoDB. 
+
+Good luck with your own map making adventures! If you come up with something cool, definitely post about it in the comments. 
+
+We'd love to hear about it!
+
+ [1]: https://scotch.io/tutorials/making-mean-apps-with-google-maps-part-i
+ [2]: https://mean-google-maps.herokuapp.com/
+ [3]: https://scotch.io/wp-content/uploads/2015/10/1-MapCurrent.png
+ [4]: https://github.com/afhaque/MeanMapAppV2.0
+ [5]: https://github.com/afhaque/MeanMapAppV2.0/blob/master/TutorialMaterial/PartI/WorkingCodePartI.zip
+ [6]: https://docs.angularjs.org/api/ngRoute
+ [7]: https://scotch.io/wp-content/uploads/2015/10/2-TeamMatePanel.png
+ [8]: http://mongoosejs.com/docs/queries.html
+ [9]: http://docs.mongodb.org/manual/reference/operator/query/near/
+ [10]: https://scotch.io/wp-content/uploads/2015/10/3-NearFarExample.png
+ [11]: https://www.getpostman.com/
+ [12]: https://scotch.io/wp-content/uploads/2015/10/5-100MileDistanceBody.png
+ [13]: https://scotch.io/wp-content/uploads/2015/10/6-Results100MileDistance.png
+ [14]: https://scotch.io/wp-content/uploads/2015/10/8-1000MileQuery.png
+ [15]: https://scotch.io/wp-content/uploads/2015/10/9-1000MileResults.png
+ [16]: https://scotch.io/wp-content/uploads/2015/10/10-AdvancedQueryInitialMap.png
+ [17]: https://scotch.io/wp-content/uploads/2015/10/11-AdvancedQueryBody.png
+ [18]: https://scotch.io/wp-content/uploads/2015/10/12-AdvancedQueryResults.png
+ [19]: https://scotch.io/wp-content/uploads/2015/10/13-QueryResultsConsole.png
+ [20]: https://scotch.io/wp-content/uploads/2015/10/14-QueryResults.png
+ [21]: https://scotch.io/wp-content/uploads/2015/10/15-FinalQuery.png
+ [22]: http://docs.mongodb.org/manual/reference/geojson/
+ [23]: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+ [24]: https://snazzymaps.com/
+ [25]: http://angular-ui.github.io/angular-google-maps/#!/
+ [26]: https://scotch.io/wp-content/uploads/2015/10/Fullmap.png
+ [27]: https://scotch.io/wp-content/uploads/2015/10/MapDistanceLocal.png
+ [28]: https://scotch.io/wp-content/uploads/2015/10/MaxDistanceGlobe.png
