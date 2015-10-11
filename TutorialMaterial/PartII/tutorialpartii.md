@@ -2,13 +2,13 @@
 
 Welcome back!
 
-[Last time][1], we created an application that integrated Google Maps directly into MEAN stack code. The app provided us a panel to create users, tag their location based on latitude and longitude, and validate their whereabouts using HTML5 geolocation.
+[Last time][1], we created an application that integrated Google Maps directly into the MEAN stack. The app provided us a panel to create users, tag their location based on latitude and longitude, and validate their whereabouts using HTML5 geolocation.
 
 As of this writing, over 150 users have added themselves to our [demo map][2], with diverse locations strewn from San Francisco to Melbourne -- which is already pretty cool when you think about it!
 
 ![1-MapCurrent][3]
 
-Today, we'll be taking our work a step further by adding a new control panel that allows us to filter users based on a variety of fields. The final product will allow us to query our map based on gender, age, favorite language, proximity, and whether a user's location has been HTML5 verified. Additionally, this tutorial will also give us a nice opportunity to discuss some of MongoDB's geospatial query tools.
+Today, we'll be taking our work a step further by adding a new control panel that allows us to filter users based on a variety of fields. The final product will allow us to query our map based on gender, age, favorite language, proximity, and whether a user's location has been HTML5 verified. Additionally, this tutorial will give us an opportunity to introduce some of MongoDB's geospatial query tools.
 
 As you follow along, feel encouraged to grab the [source code][4]. Also, if you're joining us for the first time, you can download the code from [Part I using this link][5].
 
@@ -44,7 +44,7 @@ Since our app wil now have two separate control panels -- one for adding users a
 
 To do this, we're going to store the code associated with each panel in its own HTML partial. We'll then specify in our main Angular module (`app.js`) that our application should display the `queryForm` partial when the URL includes `/find` and the `addForm` partial for all other URLs.
 
-Let's go ahead and extract the 'Add Form' code that previously found in our `index.html` file and paste it into the `addForm.html` file of our `partials` folder.
+Let's go ahead and extract the 'Add Form' code previously found in our `index.html` file and paste it into the `addForm.html` file of our `partials` folder.
 
 <pre><code class="language-markup">
 &lt;!-- addForm.html --&gt;
@@ -120,7 +120,7 @@ Let's go ahead and extract the 'Add Form' code that previously found in our `ind
 &lt;/div&gt;
 </code></pre>
 
-Next, let's paste the code associated with our new Query Form into the `queryForm.html` of the same `partials` folder.
+Next, let's paste the code associated with our new Query Form into the `queryForm.html` of the same folder.
 
 <pre><code class="language-markup">
 &lt;!-- queryForm.html --&gt;
@@ -232,7 +232,7 @@ var app = angular.module('meanMapApp', ['addCtrl', 'geolocation', 'gservice', 'n
 
 For those less familiar with Angular's `ngRoute` module, what we've done here is made use of Angular's `routeProvider` service to identify the URL our users are looking at in the browser. Thus, when a user is looking at a URL with a given suffix, Angular knows which pre-defined controller and templateURL to use.
 
-As you can see, in the example above, when a user is looking at `/join` (or any URL other than `/find`), Angular will employ the `addCtrl` controller that we created in Part I and display the content from our `addForm.html` file. Similarly when a user is looking at `/find`, the user will be displayed `queryForm.html` content. (Once we create the `queryCtrl` controller, we will specify this here as well.)
+As you can see, in the example above, when a user is looking at `/join` (or any URL other than `/find`), Angular will employ the `addCtrl` controller that we created in Part I and display the content from our `addForm.html` file. Similarly when a user is looking at `/find`, the user will be displayed the `queryForm.html` content. (Once we create the `queryCtrl` controller, we will specify this here as well.)
 
 Now that we have our partials ready, let's update our `index.html` file.
 
@@ -356,13 +356,13 @@ We've done a couple of key things here. So let's break it down:
 
 1.  First, we created a new `POST` request handler for URLs with the suffix `/query`. This handler expects a JSON request body, which specifies three parameters: latitude, longitude, and distance. These parameters are then converted and stored as variables in the handler.
 
-2.  We then create a generic Mongoose Query using the [Query Builder][8] format. This format begins by establishing a generic `query` object equal to the unfiltered search of all users in our database.
+2.  We then created a generic Mongoose Query using the [Query Builder][8] format. This format begins by establishing a generic `query` object equal to the unfiltered search of all users in our database.
 
-3.  If a distance is provided, the Query Builder will then add a new search condition that filters for all users that fall within the distance provided of the query's coordinates (latitude, longitude). Here we're using the MongoDB search parameter [$near][9] and its associated properties `maxDistance` and `spherical` to specify the range we're looking to cover. We're multiplying the distance of our query body by 1609.34, because we want to take our users' input (in miles) and convert it into the units MongoDB expects (in meters). Lastly, we're specifying that the distance should be determined assuming a spherical surface. This is important, because we'll be evaluating distances across the globe, as opposed to a flat Euclidean surface.
+3.  If a distance is provided, the Query Builder will add a new search condition that filters for all users that fall within the distance provided of the query's coordinates (latitude, longitude). Here we're using the MongoDB search parameter [$near][9] and its associated properties `maxDistance` and `spherical` to specify the range we're looking to cover. We're multiplying the distance of our query body by 1609.34, because we want to take our users' input (in miles) and convert it into the units MongoDB expects (in meters). Lastly, we're specifying that the distance should be determined assuming a spherical surface. This is important, because we'll be evaluating distances across the globe, as opposed to a flat Euclidean surface.
 
-4.  Finally, we use `query.exec` to instruct Mongoose to run the final query. If the query encounters no errors, it will provide a JSON output of all users who meet the criteria.
+4.  Finally, we used `query.exec` to instruct Mongoose to run the final query. If the query encounters no errors, it will provide a JSON output of all users who meet the criteria.
 
-Let's go ahead and test what we have so far. To do this, re-run your application using `node server.js` and begin placing dummy markers on your map. Place two markers near each other on one side of the map and two markers a sizeable distance away. Then position your marker next to the first two markers and note the associated latitude and longitude.
+At this point, let's test what we have. To do this, re-run your application using `node server.js` and place a few dummy markers on your map. Place two markers near each other on one side of the map and two markers a sizeable distance away. Then position your marker next to the first two markers and note the associated latitude and longitude.
 
 ![3-NearFarExample][10]
 
@@ -382,7 +382,7 @@ If all went well, your response should list the remaining markers as well.
 
 ![9-1000MileResults][15]
 
-We'll examine the precision capabilities of our query a bit later, but for now, let's go ahead and add the remaining filter conditions.
+We'll examine the precision capabilities of our query a bit later, but for now, let's add the remaining filter conditions.
 
 To do this, paste the following code over the POST request we just created.
 
@@ -455,7 +455,7 @@ app.post('/query/', function(req, res){
 
 What we've done here is successively added conditions that check if our user has provided distance, gender, age, language, or HTML5 verified constraints to the `POST` body. If any of these constraints exist, we'll add the associated query condition to our Query Builder. Take note of this example as it really highlights the value of Mongoose's Query Builder for complex queries.
 
-Speaking of complex queries. Let's go ahead and test one now. To do this, create a set of mock users in various locations with assorted characteristics.
+Speaking of complex queries, let's go ahead and test one now. To do this, create a set of mock users in various locations with assorted characteristics.
 
 Here I've created a set of markers around Indianapolis.
 
@@ -465,7 +465,7 @@ Let's say, I'm creating a coding school that targets girls between the ages of 2
 
 ![11-AdvancedQueryBody][17]
 
-Then when I run the query, I see a successfully filtered set of results.
+Then when I run the query, I see only the filtered set of results.
 
 ![12-AdvancedQueryResults][18]
 
@@ -473,9 +473,9 @@ Huzzah! IndyCodingSchool here we come.
 
 ## Creating the Query Controller
 
-Okay. That was great, but writing JSON requests manually seriously sucks. We need to build our UI capabilities ASAP!
+Okay. That was great, but writing JSON requests manually can seriously suck. We need to build our UI capabilities ASAP!
 
-To do this, let's paste the following code in our `queryCtrl.js` file.
+To begin, let's paste the following code in our `queryCtrl.js` file.
 
 <pre><code class="language-javascript">
 // queryCtrl.js
@@ -550,7 +550,7 @@ queryCtrl.controller('queryCtrl', function($scope, $log, $http, $rootScope, geol
 });
 </code></pre>
 
-What we've done here is very similar to the work we did in Part I. We created a new module and controller called `queryCtrl`. This controller relies on `$scope` to pull all of the form data from our active `queryForm.html` file. These elements are converted into variables, which are then used to directly create an http `POST` request to the `/query` URL whenever the `$scope.queryUsers` function is triggered. Additionally, as was the case with our `addCtrl` controller, the `queryCtrl` has code for identifying a user's current location and for handling click capture.
+What we've done here is very similar to the work we did in Part I. We created a new module and controller called `queryCtrl`. This controller relies on `$scope` to pull all of the form data from our active `queryForm.html` file. These elements are converted into variables, which are then used to directly create an http `POST` request to the `/query` URL whenever the `$scope.queryUsers` function (associated with our query button) is triggered. Additionally, as was the case with our `addCtrl` controller, the `queryCtrl` has code for identifying a user's current location and for handling click capture.
 
 Now that our controller is ready, let's add a reference to `queryCtrl` in our main Angular module in `app.js`.
 
@@ -579,7 +579,7 @@ Finally, we'll include a link to the `queryCtrl.js` script in our `index.html` f
 
 Now that we've completed everything, let's repeat the example from before. But this time, use the form itself to conduct the search.
 
-Since we haven't updated our map service, we won't yet see changes on the map just yet. However, if we open up our Google Developers Console (`ctrl+shift+i`) and navigate to the console, we should see both our `queryBody` and the `queryResults` displayed.
+Since we haven't updated our map service, we won't see changes on the map just yet. However, if we open up our Google Developers Console (`ctrl+shift+i`) and navigate to the console, we should see both our `queryBody` and the `queryResults` displayed.
 
 ![13-QueryResultsConsole][19]
 
@@ -634,13 +634,13 @@ googleMapService.refresh = function(latitude, longitude, filteredResults){
 };
 </code></pre>
 
-Here what we've done is introduced a new optional parameter `filteredResults` to the function.
+Here what we've done is introduced a new optional parameter `filteredResults` to the `refresh` function.
 
-As you may recall, from Part I, the original purpose of the `refresh` function was to pull information on all the users in our database through a `GET` request to `/users` and to convert this data into Google Map markers. These markers were then used to populate our map, which was then displayed to users with their own location marked as well.
+As you may recall, from Part I, the original purpose of the `refresh` function was to pull information on all users in our database through a `GET` request to `/users` and to convert this data into Google Map markers. These markers were then used to populate our map, which was then displayed to users with their own location marked as well.
 
-By adding in the `filteredResults` parameter, we're adapting the `refresh` function for a second purpose. In cases, where we want to show only filtered results, we're going to send the `refresh` function a JSON that includes only the filter-limited results. We'll be able to generate these results using the `POST` request to the `/query` route that we just created.
+By adding in the `filteredResults` parameter, we're adapting the `refresh` function for a second purpose. In cases, where we want to show only filtered results, we're going to circumvent the `$http` `GET` request, and instead directly send a JSON that includes only the filter-limited results. We'll be able to generate these results using the `POST` request to the `/query` route that we just created.
 
-Once the `refresh` function receives these filtered results, it will pass the JSON to our `convertToMapPoints` function and store the converted set of Google Map markers in our `locations` array. We can then initialize our map as before and only the filtered results will be shown.
+Once the `refresh` function receives these filtered results, it will pass the JSON to our `convertToMapPoints` function and store the converted set of Google Map markers in our `locations` array. We can then initialize our map as before, but this time only the filtered results will be shown.
 
 Next, let's make one more change to make things more obvious. Go ahead and paste the below code over the `initialize` function.
 
@@ -735,6 +735,7 @@ Now that our `refresh` function has been updated. Let's finally update our `quer
 <pre><code class="language-javascript">
 // queryCtrl.js
 
+// $http.post('/query, queryBody).successs(function(queryResults){...
 // Old console.log code ... 
 
 // Pass the filtered results to the Google Map Service and refresh the map
@@ -757,23 +758,23 @@ That said, even with as simple a map application as this one -- it's remarkable 
 
 ![16-FinalHTML5Verified][26]
 
+Good luck with your own map making adventures! If you come up with something cool, definitely post about it in the comments.
+
+We'd love to hear about it!
+
 ## BONUS: "But just how accurate is this Mongo $near thing...?"
 
-Well. It turns out *pretty* damn accurate is the answer. While writing this tutorial, I'd stumbled into a few articles that anecdotally estimated that the `$near` function was good enough at discriminating distances within 5 miles -- so I decided to test and see for myself. I ran a few experiments with coordinates a known distance away from each other, and looked for the minimum distance I could use to discriminate locations. 
+Well. It turns out *pretty* damn accurate is the answer. While writing this tutorial, I'd stumbled into a few articles that anecdotally estimated that the `$near` function was good enough at discriminating distances within 5 miles -- so I decided to test and see for myself. I ran a few experiments with coordinates a known distance away from each other, and looked for the minimum distance I could use to discriminate locations.
 
-For small distances (where Euclidean "flat" geometry takes hold), Mongo distance queries were right on the money -- consistently able to discriminate distances within 1 mile of the actual distance. 
+For small distances (where Euclidean "flat" geometry takes hold), Mongo distance queries were right on the money -- consistently able to discriminate distances within 1 mile of the actual distance.
 
 ![17-LocalDistances][27]
 
-For larger distances (where more complex "spherical" geometries become relevant), the MongoDB distance queries were off by about ~10 miles. Not as good, but not shabby at all -- especially, considering there exist multiple methods for calculating spherical distances. .
+For larger distances (where more complex "spherical" geometries become relevant), the MongoDB distance queries were off by about ~10 miles. Not as good, but not shabby at all -- especially, considering there exist multiple methods for calculating spherical distances.
 
 ![18-GlobalDistances][28]
 
-All in all, this presents even more reason to play around with the Geospatial tools in MongoDB. 
-
-Good luck with your own map making adventures! If you come up with something cool, definitely post about it in the comments. 
-
-We'd love to hear about it!
+All in all, this presents even more reason to play around with the Geospatial tools in MongoDB -- so go forth with confidence young cartographers!
 
  [1]: https://scotch.io/tutorials/making-mean-apps-with-google-maps-part-i
  [2]: https://mean-google-maps.herokuapp.com/
