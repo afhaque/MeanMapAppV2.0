@@ -5,7 +5,11 @@ Basic application demonstrating MEAN (Mongo, Express, Angular, and Node) Integra
 
 ## Demo Link
 
-http://ec2-52-3-241-230.compute-1.amazonaws.com:3000/#/join
+https://mean-google-maps.herokuapp.com/#/join
+
+## Full Tutorial
+
+https://scotch.io/tutorials/making-mean-apps-with-google-maps-part-i
  
 ## Instructions to run locally 
 
