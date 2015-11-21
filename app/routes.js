@@ -14,11 +14,12 @@ module.exports = function(app) {
         // Uses Mongoose schema to run the search (empty conditions)
         var query = User.find({});
         query.exec(function(err, users){
-            if(err)
+            if(err) {
                 res.send(err);
-
-            // If no errors are found, it responds with a JSON of all users
-            res.json(users);
+            } else {
+                // If no errors are found, it responds with a JSON of all users
+                res.json(users);
+            }
         });
     });
 
