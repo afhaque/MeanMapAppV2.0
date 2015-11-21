@@ -35,9 +35,9 @@ module.exports = function(app) {
         newuser.save(function(err){
             if(err)
                 res.send(err);
-
-            // If no errors are found, it responds with a JSON of the new user
-            res.json(req.body);
+            else
+                // If no errors are found, it responds with a JSON of the new user
+                res.json(req.body);
         });
     });
 
@@ -99,9 +99,9 @@ module.exports = function(app) {
         query.exec(function(err, users){
             if(err)
                 res.send(err);
-
-            // If no errors, respond with a JSON of all users that meet the criteria
-            res.json(users);
+            else
+                // If no errors, respond with a JSON of all users that meet the criteria
+                res.json(users);
         });
     });
 
@@ -115,7 +115,8 @@ module.exports = function(app) {
         User.findByIdAndRemove(objID, update, function(err, user){
             if(err)
                 res.send(err);
-            res.json(req.body);
+            else
+                res.json(req.body);
         });
     });
 };
