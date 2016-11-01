@@ -4,8 +4,8 @@ module.exports = {
 
     mongolab:
     {
-        name: "scotch-user-map-ec2",
-        url: "mongodb://scotch:scotchrocks@ds051853.mongolab.com:51853/mean-map-app",
+        name: "mongolab",
+        url: "mongodb://BigCoder:BigCoder!@ds139817.mlab.com:39817/heroku_cnkn5vpn",
         port: 27017
     },
 
