@@ -31,8 +31,3 @@ node server.js
 ````
 
 3) Open browser `http://localhost:3000/`
-
-## Questions
-
-For questions, contact Ahmed Haque (afhaque@rice.edu)
-
