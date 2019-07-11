@@ -105,7 +105,7 @@ angular.module('gservice', [])
         var initialize = function(latitude, longitude, filter) {
 
             // Uses the selected lat, long as starting point
-            var myLatLng = {lat: selectedLat, lng: selectedLong};
+            var myLatLng = {lat: Number.parseFloat(selectedLat), lng: Number.parseFloat(selectedLong)};
 
             // If map has not been created...
             if (!map){
@@ -119,10 +119,10 @@ angular.module('gservice', [])
 
             // If a filter was used set the icons yellow, otherwise blue
             if(filter){
-                icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+                icon = "//maps.google.com/mapfiles/ms/icons/yellow-dot.png";
             }
             else{
-                icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+                icon = "//maps.google.com/mapfiles/ms/icons/blue-dot.png";
             }
 
             // Loop through each location in the array and place a marker
@@ -149,7 +149,7 @@ angular.module('gservice', [])
                 position: initialLocation,
                 animation: google.maps.Animation.BOUNCE,
                 map: map,
-                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                icon: '//maps.google.com/mapfiles/ms/icons/red-dot.png'
             });
             lastMarker = marker;
 
@@ -162,7 +162,7 @@ angular.module('gservice', [])
                     position: e.latLng,
                     animation: google.maps.Animation.BOUNCE,
                     map: map,
-                    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                    icon: '//maps.google.com/mapfiles/ms/icons/red-dot.png'
                 });
 
                 // When a new spot is selected, delete the old red bouncing marker
