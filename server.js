@@ -12,7 +12,10 @@ var app             = express();
 // Express Configuration
 // -----------------------------------------------------
 // Sets the connection to MongoDB
-mongoose.connect(database.mongolab.url);
+mongoose.connect(database.local.url);
+
+// replace MAPS_API_KEY in index.html
+require('./app/indexHtml.js')(app, __dirname + '/public');
 
 // Logging and Parsing
 app.use(express.static(__dirname + '/public'));                 // sets the static files location to public
